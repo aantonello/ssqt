@@ -1,0 +1,45 @@
+ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
+ source=source {
+  common=. {
+   stdplx.hpp
+   ssqtcmn.hpp
+  }
+  debug=. {
+   ssqtdbg.hpp
+   ssqtdbg.cpp
+  }
+  properties=. {
+   ssqtprop.hpp
+  }
+  xml support=. {
+   SSXMLElement=. {
+    ssqtxmle.hpp
+    ssqtxmle.cpp
+   }
+   SSXMLDocument=. {
+    ssqtxmld.hpp
+    ssqtxmld.cpp
+   }
+  }
+  ui=. {
+   SSApplication=. {
+    ssqtapp.hpp
+    ssqtapp.cpp
+   }
+  }
+ }
+ res=source/res {
+ }
+ docs=docs {
+  examples=examples enc="utf8" {
+   ssprop01.h
+   ssprop01.cpp
+   ssprop02.h
+   ssprop02.cpp
+  }
+ }
+ .gitignore
+ README.md
+ onload.vim
+ ChangeLog
+}
