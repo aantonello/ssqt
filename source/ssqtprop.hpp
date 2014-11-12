@@ -17,6 +17,108 @@
 #define __SSQTPROP_HPP_DEFINED__
 
 /**
+ * \internal
+ * @{ *//* ---------------------------------------------------------------- */
+/* Internal Types {{{ */
+
+/**
+ * Function object.
+ * Constructs a function object to a pointer to member getter function.
+ * Getters has only return type. No parameters are supported.
+ * @since 1.1
+ *//* --------------------------------------------------------------------- */
+template<typename _Class, typename _Ret>
+struct __getter_function_type
+{
+private:
+    _Ret (_Class::*m_pfn)();
+
+public:
+    explicit __getter_function_type(_Ret (_Class::*pfn)()) : m_pfn(pfn) { }
+
+public:
+    _Ret operator()(_Class *p) {
+        return (p->*m_pfn)();
+    }
+};
+
+/**
+ * Function object.
+ * Constructs a function object to a pointer to const getter member function.
+ * Getters has only return type. No parameters are supported.
+ * @since 1.1
+ *//* --------------------------------------------------------------------- */
+template<typename _Class, typename _Ret>
+struct __const_getter_function_type
+{
+private:
+    _Ret (_Class::*m_pfn)() const;
+
+public:
+    explicit __const_getter_function_type(_Ret (_Class::*pfn)() const) :
+        m_pfn(pfn) { }
+
+public:
+    _Ret operator()(_Class *p) const {
+        return (p->*m_pfn)();
+    }
+};
+
+/**
+ * Function object.
+ * Constructs a function object to a pointer to setter member function.
+ * Setters accepts a single argument and has no return type.
+ * @since 1.1
+ *//* --------------------------------------------------------------------- */
+template<typename _Class, typename _Arg>
+struct __setter_function_type
+{
+private:
+    void (_Class::*m_pfn)(const _Arg &);
+
+public:
+    explicit __setter_function_type(void (_Class::*pfn)(const _Arg &)) :
+        m_pfn(pfn) { }
+
+public:
+    void operator()(_Class *p, const _Arg &val) {
+        (p->*m_pfn)(val);
+    }
+};
+
+/**
+ * Overloaded function to get the object for a getter member function.
+ * @since 1.1
+ *//* --------------------------------------------------------------------- */
+template<typename _Ret, typename _Class>
+inline __getter_function_type<_Class, _Ret>
+getter_function_object_proxy(_Ret (_Class::*pfn)()) {
+    return __getter_function_type<_Class, _Ret>(pfn);
+}
+
+/**
+ * Overloaded function to get the object for a const getter member function.
+ * @since 1.1
+ *//* --------------------------------------------------------------------- */
+template<typename _Ret, typename _Class>
+inline __const_getter_function_type<_Class, _Ret>
+getter_function_object_proxy(_Ret (_Class::*pfn)() const) {
+    return __const_getter_function_type<_Class, _Ret>(pfn);
+}
+
+/**
+ * Function to get the setter member function object.
+ * @since 1.1
+ *//* --------------------------------------------------------------------- */
+template<typename _Arg, typename _Class>
+inline __setter_function_type<_Class, _Arg>
+setter_function_object_proxy(void (_Class::*pfn)(const _Arg&)) {
+    return __setter_function_type<_Class, _Arg>(pfn);
+}
+/* }}} Internal Types */
+///@} internal
+
+/**
  * \ingroup ssqt_templates
  * Template class for property like member implementation.
  * \tparam _Type The type of the property. This is the type of the value, like
@@ -122,8 +224,8 @@ public:
     /*}}}*/
 
 private:
-    typedef value_type (*getter_pfn)();
-    typedef void (*setter_pfn)(const value_type &);
+    typedef value_type (*getter_pfn)(void*);
+    typedef void (*setter_pfn)(void*, const value_type &);
 
     void *m_owner;
     setter_pfn set_func;

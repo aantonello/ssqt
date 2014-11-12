@@ -18,6 +18,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <QDebug>
+
 // void __ss_debug(const char *file, int line, const char *fmt, ...);/*{{{*/
 void __ss_debug(const char *file, int line, const char *fmt, ...)
 {
@@ -34,7 +36,10 @@ void __ss_debug(const char *file, int line, const char *fmt, ...)
         if (slash != NULL)
             name = (slash + 1);
 
-        pos = snprintf(buffer, length, "%s @ %d: ", name, line);
+        if (fmt != NULL)
+            pos = snprintf(buffer, length, "%s @ %d:\n", name, line);
+        else
+            pos = snprintf(buffer, length, "%s @ %d: ", name, line);
     }
 
     if (fmt != NULL)
@@ -60,7 +65,12 @@ void __ss_trace(const char *func, const char *fmt, ...)
     buffer[0] = '\0';
 
     if (func != NULL)
-        pos = snprintf(buffer, length, "%s: ", func);
+    {
+        if (fmt != NULL)
+            pos = snprintf(buffer, length, "%s:\n", func);
+        else
+            pos = snprintf(buffer, length, "%s: ", func);
+    }
 
     if (fmt != NULL)
     {

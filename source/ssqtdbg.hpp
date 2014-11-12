@@ -59,10 +59,10 @@
 # define ssflush(h, p, s, t)
 # define ssassert(expr, msg)
 #else
-# define ssprint(fmt, ...)      __ss__debug(NULL, 0, (fmt), ##__VA_ARGS__)
-# define ssdebug(fmt, ...)      __ss__debug(__FILE__, __LINE__, (fmt), ##__VA_ARGS__)
-# define sstrace(fmt, ...)      __ss__trace(Q_FUNC_INFO, (fmt), ##__VA_ARGS__)
-# define ssflush(h, p, s, t)    __ss__flush((h), (p), (s), (t))
+# define ssprint(fmt, ...)      __ss_debug(NULL, 0, (fmt), ##__VA_ARGS__)
+# define ssdebug(fmt, ...)      __ss_debug(__FILE__, __LINE__, (fmt), ##__VA_ARGS__)
+# define sstrace(fmt, ...)      __ss_trace(Q_FUNC_INFO, (fmt), ##__VA_ARGS__)
+# define ssflush(h, p, s, t)    __ss_flush((h), (p), (s), (t))
 # define ssassert(expr, msg)    while (!(expr)) { ssdebug(msg); ssbreak(); }
 #endif  /* !defined(QT_NO_DEBUG) */
 /* Documentation {{{ */

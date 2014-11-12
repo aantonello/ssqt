@@ -14,8 +14,12 @@
  * may change it if you like. Or just use it as it is.
  */
 #include "stdplx.hpp"
+#include "ssqtcmn.hpp"
+#include "ssqterr.hpp"
+#include "ssqtdbg.hpp"
 #include "ssqtxmle.hpp"
 #include "ssqtxmld.hpp"
+#include <errno.h>
 
 /* ===========================================================================
  * SSXMLDocument class
@@ -51,7 +55,7 @@ error_t SSXMLDocument::open(const QFile &file, const char *encoding)
 {
     Q_UNUSED(encoding);
 
-    QXmlStreamReader stream(&file);
+    QXmlStreamReader stream(const_cast<QFile *>(&file));
     error_t result = SSNO_ERROR;
 
     result = __xml_readXmlStream(&stream, this);
@@ -79,7 +83,7 @@ error_t SSXMLDocument::open(const QByteArray &byteArray, const char *encoding)
 error_t SSXMLDocument::write(const char *encoding)
 {
     if (fileName.isEmpty() || fileName.startsWith(':'))
-        return EINVAL;
+        return SSE_INVAL;
 
     QFile file(fileName);
     return write(&file, encoding);
@@ -96,7 +100,7 @@ error_t SSXMLDocument::write(const QString &fileName, const char *encoding)
 error_t SSXMLDocument::write(QFile &file, const char *encoding)
 {
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-        return EIO;
+        return SSE_IO;
 
     return write(&file, encoding);
 }
@@ -105,7 +109,7 @@ error_t SSXMLDocument::write(QFile &file, const char *encoding)
 error_t SSXMLDocument::write(QIODevice *device, const char *encoding)
 {
     if (!device->open(QIODevice::WriteOnly | QIODevice::Text))
-        return EIO;
+        return SSE_IO;
 
     QString xmlHeader;
     QTextCodec *codec = NULL;
@@ -116,18 +120,79 @@ error_t SSXMLDocument::write(QIODevice *device, const char *encoding)
     if (encoding)
         codec = QTextCodec::codecForName(encoding);
     else
-        codec = QTextCodec:codecForLocale();
+        codec = QTextCodec::codecForLocale();
 
-    if (code)
+    if (codec)
         device->write( codec->fromUnicode(xmlHeader) );
     else
         device->write( xmlHeader.toUtf8() );
 
     if (!SSXMLElement::write(device))
-        result = EIO;
+        result = SSE_IO;
 
     device->close();
     return result;
 }
 /*}}}*/
 ///@} Write Operations
+
+// static error_t __xml_readXmlStream(QXmlStreamReader *reader, SSXMLElement *root);/*{{{*/
+static error_t __xml_readXmlStream(QXmlStreamReader *reader, SSXMLElement *root)
+{
+    if (!reader || !root) return SSE_INVAL;
+
+    QXmlStreamReader::TokenType type = QXmlStreamReader::EndDocument;
+    QXmlStreamAttributes attributes;
+    QXmlStreamAttribute  attribute;
+    SSXMLElement *current = NULL;
+    size_t limit;
+
+    while (!reader->atEnd())
+    {
+        type = reader->readNext();
+        if ((type == QXmlStreamReader::Invalid) || (type == QXmlStreamReader::EndDocument))
+            break;
+
+        if (type == QXmlStreamReader::EndElement)
+            current = current->parentElement;
+        else if (type == QXmlStreamReader::StartElement)
+        {
+            if (current)
+            {
+                current->append(new SSXMLElement(reader->name().toString()));
+                current = current->lastElement();
+            }
+            else                        /* Current element is root. */
+            {
+                current = root;
+                current->elementName = reader->name().toString();
+            }
+
+            attributes = reader->attributes();
+            limit      = attributes.count();
+            for (size_t i = 0; i < limit; ++i)
+            {
+                attribute = attributes[i];
+                current->set(attribute.name().toString(), attribute.value().toString());
+            }
+        }
+    };
+
+    if (type == QXmlStreamReader::Invalid)
+    {
+        sstrace("%s\n", SST(reader->errorString()));
+        switch (reader->error())
+        {
+        case QXmlStreamReader::NotWellFormedError:
+        case QXmlStreamReader::UnexpectedElementError:
+            return SSE_FTYPE;
+        case QXmlStreamReader::PrematureEndOfDocumentError:
+            return SSE_IO;
+        default:
+            return SSE_FAULT;
+        }
+    }
+    return SSNO_ERROR;
+}
+/*}}}*/
+

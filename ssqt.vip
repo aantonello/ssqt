@@ -1,8 +1,13 @@
 ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
  source=source {
+  ssqt.pro
+  exports=. {
+   libssqt.h
+  }
   common=. {
    stdplx.hpp
    ssqtcmn.hpp
+   ssqterr.hpp
   }
   debug=. {
    ssqtdbg.hpp
@@ -20,6 +25,10 @@ ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
     ssqtxmld.hpp
     ssqtxmld.cpp
    }
+  }
+  resources=. {
+   ssqtasst.hpp
+   ssqtasst.cpp
   }
   ui=. {
    SSApplication=. {

@@ -1,19 +1,7 @@
-Build: 0	Version: 1.1	Branch: Master
+Build: 7	Version: 1.1	Branch: Master
 
-	* README.md: Readme file created.
-	* onload.vim: Project plugin configuration script created.
-	* ssqt.vip: Project file created.
-	* .gitignore: Hidden file for Git configuration.
-	* source/stdplx.hpp: Added standard include file.
-	* source/ssqtcmn.hpp: A few scalar types.
-	* source/ssqtdbg.{hpp,cpp}: Debugging operations. Declaration and
-	  definition.
-	* source/ssqtprop.hpp: Class template for property like member
-	  variables.
-	* source/ssqtapp.{hpp,cpp}: SSApplication class.
-	* docs/examples/ssprop01.{h,cpp}: Examples for property class
-	  template added.
-	* docs/examples/ssprop02.{h,cpp}: Examples for property class
-	  template added.
-	* source/ssqtxmle.{hpp,cpp}: XML element class added.
-	* source/ssqtxmld.{hpp,cpp}: XML document class added.
+	* source/ssqtxmld.cpp: Finished with XML parsing function.
+	* source/ssqterr.hpp: Added file with declared error list.
+	* source/libssqt.h: Standard library include file.
+	* source/ssqtasst.{hpp,cpp}: Added file with global function to
+	  access resource assets.

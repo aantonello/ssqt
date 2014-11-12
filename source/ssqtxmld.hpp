@@ -16,6 +16,9 @@
 #ifndef __SSQTXMLD_HPP_DEFINED__
 #define __SSQTXMLD_HPP_DEFINED__
 
+#include <QByteArray>
+#include <QFile>
+
 /**
  * @ingroup ssqt_xml
  * An XML document class.
@@ -76,8 +79,14 @@ public:     // Read Operations
      * values are listed in the @ref ssqt_encodings group.
      * @return If the function succeeded the result is \b 0 (\c
      * SSNO_ERROR). Otherwize an error code will be returned. The
-     * possible result codes are C standard error values like \c ENOENT (file
-     * not found) or \c ENOMEM (not enough memory), etc...
+     * possible result codes are:
+     * - \b SSE_FTYPE: When the file passed is ill-formed.
+     * - \b SSE_IO: When the passed file is not finished. That is, until the end
+     *      of the file all was right. But the file ended and elements was not
+     *      closed correctly.
+     * - \b SSE_FAULT: Any other kind of error.
+     * .
+     * @sa ssqt_errors
      * @since 1.1
      **/
     error_t open(const QString &fileName, const char *encoding = NULL);
@@ -93,8 +102,14 @@ public:     // Read Operations
      * values are listed in the @ref ssqt_encodings group.
      * @return If the function succeeded the result is \b 0 (\c
      * SSNO_ERROR). Otherwize an error code will be returned. The
-     * possible result codes are C standard error values like \c ENOENT (file
-     * not found) or \c ENOMEM (not enough memory), etc...
+     * possible result codes are:
+     * - \b SSE_FTYPE: When the file passed is ill-formed.
+     * - \b SSE_IO: When the passed file is not finished. That is, until the end
+     *      of the file all was right. But the file ended and elements was not
+     *      closed correctly.
+     * - \b SSE_FAULT: Any other kind of error.
+     * .
+     * @sa ssqt_errors
      * @since 1.1
      **/
     error_t open(const QFile &file, const char *encoding = NULL);
@@ -110,8 +125,14 @@ public:     // Read Operations
      * values are listed in the @ref ssqt_encodings group.
      * @return If the function succeeded the result is \b 0 (\c
      * SSNO_ERROR). Otherwize an error code will be returned. The
-     * possible result codes are C standard error values like \c ENOENT (file
-     * not found) or \c ENOMEM (not enough memory), etc...
+     * possible result codes are:
+     * - \b SSE_FTYPE: When the file passed is ill-formed.
+     * - \b SSE_IO: When the passed file is not finished. That is, until the end
+     *      of the file all was right. But the file ended and elements was not
+     *      closed correctly.
+     * - \b SSE_FAULT: Any other kind of error.
+     * .
+     * @sa ssqt_errors
      * @since 1.1
      **/
     error_t open(const QByteArray &byteArray, const char *encoding = NULL);
@@ -127,17 +148,16 @@ public:     // Write Operations
      * Otherwise the value can be any codec name recognized by \c QTextCodec
      * class. Some values are listed in the @ref ssqt_encodings group.
      * @return If the function succeeded the result is \b 0 (\c SSNO_ERROR).
-     * Otherwize an error code will be returned. The possible result codes are
-     * C standard error values like \c EPERM (access denied) or \c ENOMEM
-     * (not enough memory), etc...
+     * Otherwize an error code will be returned.
      * @remarks This operation can be used when the XML data was loaded from
      * a file on disk with one of the constructors or \c open() functions that
      * accept a \c QString or \c QFile object. The original file will be
      * completly overwritten by this function.  When the document was created
      * from a file in memory, that is, no disk object was loaded in this
-     * instance, the operation will fail with \c EINVAL error code. This error
-     * will also be returned when the XML data was loaded from a resource
-     * file.
+     * instance, the operation will fail with \c SSE_INVAL error code. This
+     * error will also be returned when the XML data was loaded from
+     * a resource file.
+     * @sa ssqt_errors
      * @since 1.1
      **/
     error_t write(const char *encoding = NULL);
@@ -153,9 +173,8 @@ public:     // Write Operations
      * Otherwise the value can be any codec name recognized by \c QTextCodec
      * class. Some values are listed in the @ref ssqt_encodings group.
      * @return If the function succeeded the result is \b 0 (\c SSNO_ERROR).
-     * Otherwize an error code will be returned. The possible result codes are
-     * C standard error values like \c EPERM (access denied) or \c ENOMEM
-     * (not enough memory), etc...
+     * Otherwize an error code will be returned.
+     * @sa ssqt_errors
      * @since 1.1
      **/
     error_t write(const QString &fileName, const char *encoding = NULL);
@@ -171,9 +190,8 @@ public:     // Write Operations
      * Otherwise the value can be any codec name recognized by \c QTextCodec
      * class. Some values are listed in the @ref ssqt_encodings group.
      * @return If the function succeeded the result is \b 0 (\c SSNO_ERROR).
-     * Otherwize an error code will be returned. The possible result codes are
-     * C standard error values like \c EPERM (access denied) or \c ENOMEM
-     * (not enough memory), etc...
+     * Otherwize an error code will be returned.
+     * @sa ssqt_errors
      * @since 1.1
      **/
     error_t write(QFile &file, const char *encoding = NULL);
@@ -191,9 +209,8 @@ public:     // Write Operations
      * Otherwise the value can be any codec name recognized by \c QTextCodec
      * class. Some values are listed in the @ref ssqt_encodings group.
      * @return If the function succeeded the result is \b 0 (\c SSNO_ERROR).
-     * Otherwize an error code will be returned. The possible result codes are
-     * C standard error values like \c EPERM (access denied) or \c ENOMEM
-     * (not enough memory), etc...
+     * Otherwize an error code will be returned.
+     * @sa ssqt_errors
      * @since 1.1
      **/
     error_t write(QIODevice *device, const char *encoding = NULL);

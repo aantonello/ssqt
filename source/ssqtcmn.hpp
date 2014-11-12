@@ -21,7 +21,10 @@
  * \defgroup ssqt_types Scalar Types
  * Useful to keep compatibility between 32 and 64 bits applications.
  * @{ *//* ---------------------------------------------------------------- */
-typedef intptr_t error_t;       /**< Type for error numbers.                */
+#ifndef __error_t_defined
+typedef int      error_t;       /**< Type for error numbers.                */
+#define __error_t_defined 1
+#endif
 ///@} ssqt_types
 
 /**
@@ -96,23 +99,5 @@ typedef intptr_t error_t;       /**< Type for error numbers.                */
 #define SSENC_UTF32         "UTF-32"
 /*}}}*/
 ///@} 
-
-/**
- * \defgroup ssqt_errors Error Codes
- * List of error codes used in this library.
- * Notice that we prefer error codes against exceptions since this library,
- * and Qt it self, uses a bunch of C libraries that doesn't support
- * exceptions. Error codes are good enough to tell the application that
- * something went wrong so, exceptions are used only when they are really
- * required.
- *
- * Most of operations in this library will return standard C error codes like
- * \c ENOENT, \c ENOMEM or \c EINVAL. When no error occurs the library uses
- * the value of \c SSNO_ERROR constant. The library also define a specific
- * type for those values, called \c error_t, that is an signed integer type.
- * Will have 32 or 64 bits depending upon the compiler used.
- * @{ *//* ---------------------------------------------------------------- */
-#define SSNO_ERROR      0       /**< Used when no errors occurs.            */
-///@} ssqt_errors
 
 #endif /* __SSQTCMN_HPP_DEFINED__ */

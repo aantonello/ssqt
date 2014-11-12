@@ -32,4 +32,11 @@
  * A super simple XML suport classes.
  **/
 
+/**
+ * \ingroup ssqt
+ * \defgroup ssqt_funs Global Functions
+ * The group contains all global declared functions provided by this library.
+ * Notice that global functions are kept into the \c ss namespace.
+ **/
+
 #endif /* __STDPLX_HPP_DEFINED__ */

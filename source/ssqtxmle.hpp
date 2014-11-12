@@ -16,6 +16,11 @@
 #ifndef __SSQTXMLE_HPP_DEFINED__
 #define __SSQTXMLE_HPP_DEFINED__
 
+#include <QString>
+#include <QIODevice>
+#include <QList>
+#include <QHash>
+
 /**
  * @ingroup ssqt_xml
  * An XML Element object.
@@ -24,10 +29,10 @@
 class SSXMLElement
 {
 public:
-    SSXMLElement();
-    SSXMLElement(const QString &name);
-    SSXMLElement(const SSXMLElement &other);
-    ~SSXMLElement();
+    explicit SSXMLElement(SSXMLElement *parent = NULL);
+    SSXMLElement(const QString &name, SSXMLElement *parent = NULL);
+    SSXMLElement(const SSXMLElement &other, SSXMLElement *parent = NULL);
+    virtual ~SSXMLElement();
 
 public:         // Attributes
     // bool hasAttributes() const;/*{{{*/
@@ -181,6 +186,26 @@ public:         // Child Element Operations
      **/
     SSXMLElement* elementAt(uint index) const;
     /*}}}*/
+    // SSXMLElement* firstElement() const;/*{{{*/
+    /**
+     * Gets the pointer of the first child element of this element.
+     * @returns The pointer of the first child element or \b NULL when this
+     * element doesn't have children.
+     * @sa firstElement()
+     * @since 1.1
+     **/
+    SSXMLElement* firstElement() const;
+    /*}}}*/
+    // SSXMLElement* lastElement() const;/*{{{*/
+    /**
+     * Gets the pointer of the last child element of this element.
+     * @returns The pointer of the last child element or \b NULL when this
+     * element doesn't have children.
+     * @sa lastElement()
+     * @since 1.1
+     **/
+    SSXMLElement* lastElement() const;
+    /*}}}*/
     // SSXMLElement& append(const SSXMLElement &element);/*{{{*/
     /**
      * Appends an element as child of this element.
@@ -209,6 +234,10 @@ public:         // Child Element Operations
      * @param element Pointer to the element to remove.
      * @returns \b true if the passed element was a child of this element.
      * Otherwise \b false.
+     * @remarks The \a element removed is not deleted. Is responsibility of
+     * the caller to delete the object when it is no longer needed.
+     * @note When the operation returns, the #parentElement member is set to
+     * \b NULL since the element doesn't have a parent any more.
      * @since 1.1
      **/
     bool remove(const SSXMLElement *element);
@@ -218,6 +247,8 @@ public:         // Child Element Operations
      * Removes an element at the specified index.
      * @param index Zero based index of the child element to remove.
      * @returns \b true if a child element is removed. Otherwise \b false.
+     * @remarks The object at the specified position is \e deleted in this
+     * operation.
      * @since 1.1
      **/
     bool remove(uint index);
@@ -325,6 +356,7 @@ public:         // Overloaded Operators
 
 public:         // Data Members
     QString elementName;                /**< Name of this element.          */
+    SSXMLElement *parentElement;        /**< Parent element.                */
 
 protected:
     QList<SSXMLElement*> m_nodes;       /**< List of children elements.     */
@@ -334,36 +366,45 @@ protected:
 /* ------------------------------------------------------------------------ */
 /*! \name Constructors & Destructor *//*{{{*/ //@{
 /* ------------------------------------------------------------------------ */
-// inline SSXMLElement::SSXMLElement();/*{{{*/
+// inline SSXMLElement::SSXMLElement(SSXMLElement *parent);/*{{{*/
 /**
  * Default constructor.
  * Builds an empty XML element.
+ * @param parent Pointer to the parent element. Can be \b NULL. When this
+ * element is added as a child of another element this parenthood relationship
+ * is updated.
  * @since 1.1
  *//* --------------------------------------------------------------------- */
-inline SSXMLElement::SSXMLElement() { }
+inline SSXMLElement::SSXMLElement(SSXMLElement *parent) : parentElement(parent) { }
 /*}}}*/
-// inline SSXMLElement::SSXMLElement(const SSXMLElement &other);/*{{{*/
+// inline SSXMLElement::SSXMLElement(const SSXMLElement &other, SSXMLElement *parent);/*{{{*/
 /**
  * Copy constructor.
  * Builds a copy of other element.
  * @param other Other element to copy. All data will be copied including the
  * element's name, set of attributes and children elements.
+ * @param parent Pointer to the parent element. Can be \b NULL. When this
+ * element is added as a child of another element this parenthood relationship
+ * is updated.
  * @remarks Notice that all child nodes of \a other will be duplicated.
  * @since 1.1
  *//* --------------------------------------------------------------------- */
-inline SSXMLElement::SSXMLElement(const SSXMLElement &other) {
+inline SSXMLElement::SSXMLElement(const SSXMLElement &other, SSXMLElement *parent) : 
+    parentElement(parent) {
     assign(&other);
 }
 /*}}}*/
-// inline SSXMLElement::SSXMLElement(const QString &name);/*{{{*/
+// inline SSXMLElement::SSXMLElement(const QString &name, SSXMLElement *parent);/*{{{*/
 /**
  * Builds a new XML element with the specified name.
  * @param name Name for the element's tag.
- * @param parent Parent object pointer. Can be \b NULL.
+ * @param parent Pointer to the parent element. Can be \b NULL. When this
+ * element is added as a child of another element this parenthood relationship
+ * is updated.
  * @since 1.1
  *//* --------------------------------------------------------------------- */
-inline SSXMLElement::SSXMLElement(const QString &name) : elementName(name) {
-}
+inline SSXMLElement::SSXMLElement(const QString &name, SSXMLElement *parent) :
+    elementName(name), parentElement(parent) { }
 /*}}}*/
 // inline SSXMLElement::~SSXMLElement();/*{{{*/
 /**

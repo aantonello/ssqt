@@ -14,6 +14,8 @@
  * may change it if you like. Or just use it as it is.
  */
 #include "stdplx.hpp"
+#include "ssqtcmn.hpp"
+#include "ssqtxmle.hpp"
 
 /* ===========================================================================
  * SSXMLElement class
@@ -95,6 +97,19 @@ SSXMLElement* SSXMLElement::elementAt(uint index) const
     return m_nodes.at(index);
 }
 /*}}}*/
+// SSXMLElement* SSXMLElement::firstElement() const;/*{{{*/
+SSXMLElement* SSXMLElement::firstElement() const
+{
+    return elementAt(0);
+}
+/*}}}*/
+// SSXMLElement* SSXMLElement::lastElement() const;/*{{{*/
+SSXMLElement* SSXMLElement::lastElement() const
+{
+    if (m_nodes.isEmpty()) return NULL;
+    return elementAt(m_nodes.count() - 1);
+}
+/*}}}*/
 // SSXMLElement& SSXMLElement::append(const SSXMLElement &element);/*{{{*/
 SSXMLElement& SSXMLElement::append(const SSXMLElement &element)
 {
@@ -105,7 +120,11 @@ SSXMLElement& SSXMLElement::append(const SSXMLElement &element)
 // SSXMLElement& SSXMLElement::append(SSXMLElement *element);/*{{{*/
 SSXMLElement& SSXMLElement::append(SSXMLElement *element)
 {
-    m_nodes.append(element);
+    if (element != NULL)
+    {
+        element->parentElement = this;
+        m_nodes.append(element);
+    }
     return *this;
 }
 /*}}}*/
