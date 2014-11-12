@@ -38,6 +38,8 @@ public:         // Attributes
     // bool hasAttributes() const;/*{{{*/
     /**
      * Checks whether this element has attributes.
+     * @returns \b true when at least one attribute was defined. Otherwise \b
+     * false.
      * @since 1.1
      **/
     bool hasAttributes() const;
@@ -45,6 +47,7 @@ public:         // Attributes
     // bool hasChildren() const;/*{{{*/
     /**
      * Checks if this element has some children elements.
+     * @returns \b true when at least one child exists. Otherwise \b false.
      * @since 1.1
      **/
     bool hasChildren() const;
@@ -319,7 +322,7 @@ public:         // Overloaded Operators
     // bool operator ==(const SSXMLElement &other) const;/*{{{*/
     /**
      * Checks whether this element is equal to the passed one.
-     * @param element Other element to check for equality.
+     * @param other Other element to check for equality.
      * @returns \b true when both elements are equals. Otherwise \b false.
      * @remarks Two elements are equals if they have the same name, the same
      * list of attributes with values and all its children are also equals.

@@ -1,7 +1,7 @@
 Build: 7	Version: 1.1	Branch: Master
 
-	* source/ssqtxmld.cpp: Finished with XML parsing function.
-	* source/ssqterr.hpp: Added file with declared error list.
-	* source/libssqt.h: Standard library include file.
-	* source/ssqtasst.{hpp,cpp}: Added file with global function to
-	  access resource assets.
+	* ssqtprop.hpp: Removed. Don't worth the trouble.
+	* doxyfile: Added Doxygen configuration file.
+	* libssqt.h: Removed "ssqtprop.hpp" file reference.
+	* ssqtapp.hpp: Documentation update.
+	* ssqtxmle.hpp: Documentation update.

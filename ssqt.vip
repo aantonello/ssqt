@@ -13,9 +13,6 @@ ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
    ssqtdbg.hpp
    ssqtdbg.cpp
   }
-  properties=. {
-   ssqtprop.hpp
-  }
   xml support=. {
    SSXMLElement=. {
     ssqtxmle.hpp

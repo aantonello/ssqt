@@ -19,7 +19,6 @@
 #include "ssqtcmn.hpp"
 #include "ssqterr.hpp"
 #include "ssqtdbg.hpp"
-#include "ssqtprop.hpp"
 #include "ssqtxmle.hpp"
 #include "ssqtxmld.hpp"
 #include "ssqtasst.hpp"

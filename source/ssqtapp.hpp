@@ -74,7 +74,7 @@ protected:          // Data Members
     // QSharedMemory *m_shared;/*{{{*/
     /**
      * Shared memory object.
-     * Used in the #assureSingleInstance() function to check when there is
+     * Used in the #ensureSingleInstance() function to check when there is
      * another instance of this application running.
      * @since 1.0
      **/
