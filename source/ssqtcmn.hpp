@@ -23,7 +23,7 @@
  * @{ *//* ---------------------------------------------------------------- */
 #ifndef __error_t_defined
 typedef int      error_t;       /**< Type for error numbers.                */
-#define __error_t_defined 1
+#define __error_t_defined 1     /**< @internal                              */
 #endif
 ///@} ssqt_types
 

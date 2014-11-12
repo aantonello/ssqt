@@ -34,7 +34,6 @@ HEADERS += libssqt.h \
     ssqtcmn.hpp \
     ssqterr.hpp \
     ssqtdbg.hpp \
-    ssqtprop.hpp \
     ssqtxmle.hpp \
     ssqtxmld.hpp \
     ssqtasst.hpp \

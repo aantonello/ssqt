@@ -39,4 +39,11 @@
  * Notice that global functions are kept into the \c ss namespace.
  **/
 
+/**
+ * \ingroup ssqt
+ * \defgroup ssqt_ui User Interface
+ * Constants, classes, interfaces and templates for user interface
+ * implementation.
+ **/
+
 #endif /* __STDPLX_HPP_DEFINED__ */

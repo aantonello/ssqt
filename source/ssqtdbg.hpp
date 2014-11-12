@@ -69,6 +69,7 @@
 // #define SST(str) {{{
 /**
  * \def SST(str)
+ * \ingroup ssqt_debug
  * Expands to \c qPrintable(str).
  * This macro is always available. It is just a short way to use the \c
  * qPrintable() Qt macro.
@@ -79,6 +80,7 @@
 // #define SSNAME(obj) {{{
 /**
  * \def SSNAME(obj)
+ * \ingroup ssqt_debug
  * Prints an \c QObject class name.
  * @param obj A pointer to a \c QObject class object.
  * @remarks Notice that this macro accepts only \c QObject objects or extended
@@ -89,6 +91,7 @@
 // #define ssprint(fmt, ...) {{{
 /**
  * \def ssprint
+ * \ingroup ssqt_debug
  * Writes formated debugging output.
  * This macro expands to nothing when \c QT_NO_DEBUG is defined. Otherwise it
  * will expand to \c __ss_debug() function. Read its documentation to.
@@ -96,6 +99,7 @@
 // #define ssdebug(fmt, ...) {{{
 /**
  * \def ssdebug
+ * \ingroup ssqt_debug
  * Write formated debugging output.
  * This macro expands to nothing when \c QT_NO_DEBUG is defined. Otherwise it
  * will expand to \c __ss_debug() function.
@@ -105,6 +109,7 @@
 // #define sstrace(fmt, ...) {{{
 /**
  * \def sstrace
+ * \ingroup ssqt_debug
  * Write formated debugging output.
  * This macro expands to nothing when \c QT_NO_DEBUG is defined. Otherwise it
  * will expand to \c __ss_trace() function.
@@ -114,6 +119,7 @@
 // #define ssflush(h, p, s, t) {{{
 /**
  * \def ssflush(h, p, s, t)
+ * \ingroup ssqt_debug
  * Writes binary data in the debugging output.
  * This macro expands to nothing when \c QT_NO_DEBUG is defined. Otherwise it
  * will expand to \c __ss_flush() function.
@@ -128,6 +134,7 @@
 // #define ssassert(expr, msg) {{{
 /**
  * \def ssassert(expr, msg)
+ * \ingroup ssqt_debug
  * Throws an "Assertion Failed!" message.
  * @param expr An expression that evaluates to \b true or \b false.
  * @param msg A string with a message to be shown when the expression \a expr
@@ -147,6 +154,7 @@
  * ------------------------------------------------------------------------ */
 // void __ss_debug(const char *file, int line, const char *fmt, ...);/*{{{*/
 /**
+ * \ingroup ssqt_debug
  * Writes formated debugging output.
  * @param file Current file or module name. Usually this is passed with the \c
  * __FILE__ standard C macro.
@@ -166,6 +174,7 @@ void __ss_debug(const char *file, int line, const char *fmt, ...);
 /*}}}*/
 // void __ss_trace(const char *func, const char *fmt, ...);/*{{{*/
 /**
+ * \ingroup ssqt_debug
  * Writes formated debugging output.
  * @param func Current function name. Usually this is passed with the \c
  * Q_FUNC_INFO Qt macro.
@@ -183,6 +192,7 @@ void __ss_trace(const char *func, const char *fmt, ...);
 /*}}}*/
 // void __ss_flush(const char *head, const void *ptr, size_t size, const char *tail);/*{{{*/
 /**
+ * \ingroup ssqt_debug
  * Writes binary data in the debugging output.
  * @param head An optional header text. Will be printed before the binary
  * data. Must be a pointer to a \c char array or \b NULL.

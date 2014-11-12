@@ -1,7 +1,3 @@
-Build: 7	Version: 1.1	Branch: Master
+Build: 8	Version: 1.1	Branch: Master
 
-	* ssqtprop.hpp: Removed. Don't worth the trouble.
-	* doxyfile: Added Doxygen configuration file.
-	* libssqt.h: Removed "ssqtprop.hpp" file reference.
-	* ssqtapp.hpp: Documentation update.
-	* ssqtxmle.hpp: Documentation update.
+	* ssqt.pro: Removed references to "ssqtprop.hpp" file.

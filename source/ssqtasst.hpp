@@ -27,6 +27,7 @@
 namespace ss {
 // QString asset_string(uint resID, size_t size = 1024);/*{{{*/
 /**
+ * \ingroup ssqt_assets
  * Loads a string from the executable resource.
  * @param resID The identifier of the string in the resource. Despite be an
  * unsigned integer number this value is limited in 16 bits. This limit is
