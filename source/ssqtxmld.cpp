@@ -61,6 +61,8 @@ error_t SSXMLDocument::open(const QFile &file, const char *encoding)
     result = __xml_readXmlStream(&stream, this);
     if (result == SSNO_ERROR)
         fileName = file.fileName();
+    else
+        fileName = QString();
 
     return result;
 }
@@ -70,6 +72,7 @@ error_t SSXMLDocument::open(const QByteArray &byteArray, const char *encoding)
 {
     Q_UNUSED(encoding);
 
+    fileName = QString();
     QXmlStreamReader reader(byteArray);
     return __xml_readXmlStream(&reader, this);
 }

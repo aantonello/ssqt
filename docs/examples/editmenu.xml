@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<popup title="_Edit">
+  <item id="3001" title="_Copy" keys="ctrl+c" />
+  <item id="3002" title="C_ut" keys="ctrl+x" />
+  <item id="3003" title="_Paste" keys="ctrl+v" />
+  <separator />
+  <item id="3009" title="_Delete" keys="del" />
+</popup>

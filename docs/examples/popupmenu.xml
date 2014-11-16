@@ -1,0 +1,13 @@
+<popup title="Text to show in menu bar">
+  <item id="numeric identifier" name="unique name"
+    title="short text"
+    desc="description to show in the status bar"
+    keys="shortcut keys separated by commas"
+    icon="icon resource name or number"
+    checked="true or false"
+    />
+  <separator />
+  <popup title="Text to show in the popup menu">
+    <item ... />
+  </popup>
+</popup>

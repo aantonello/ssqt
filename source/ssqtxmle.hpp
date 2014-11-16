@@ -52,6 +52,15 @@ public:         // Attributes
      **/
     bool hasChildren() const;
     /*}}}*/
+    // bool has(const QString &attrName) const;/*{{{*/
+    /**
+     * Check when an attribute exists.
+     * @param attrName \c QString with the attribute name.
+     * @return \b true when the attribute exists. \b false otherwise.
+     * @since 1.1
+     **/
+    bool has(const QString &attrName) const;
+    /*}}}*/
     // size_t numberOfAttributes() const;/*{{{*/
     /**
      * Returns the number of attributes this element has.
@@ -430,6 +439,11 @@ inline bool SSXMLElement::hasAttributes() const {
 // inline bool SSXMLElement::hasChildren() const;/*{{{*/
 inline bool SSXMLElement::hasChildren() const {
     return !m_nodes.empty();
+}
+/*}}}*/
+// inline bool SSXMLElement::has(const QString &attrName) const;/*{{{*/
+inline bool SSXMLElement::has(const QString &attrName) const {
+    return m_attrs.contains(attrName);
 }
 /*}}}*/
 // inline size_t SSXMLElement::numberOfAttributes() const;/*{{{*/

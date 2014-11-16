@@ -1,3 +1,7 @@
 Build: 8	Version: 1.1	Branch: Master
 
-	* ssqt.pro: Removed references to "ssqtprop.hpp" file.
+	* ssqtxmle.hpp (has()): New method added.
+	* res/{menuitem, popupmenu, menubar, editmenu}.xml: Several
+	  example files.
+	* ssqtmnui.{hpp,cpp}: SSMenuItem class added.
+	* ssqtmnup.hpp: SSMenuPopup class started.
