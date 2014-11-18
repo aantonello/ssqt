@@ -7,7 +7,7 @@
     checked="true or false"
     />
   <separator />
-  <popup title="Text to show in the popup menu">
+  <popup title="Text to show in the popup menu" id="popup identifier">
     <item ... />
   </popup>
 </popup>

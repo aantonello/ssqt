@@ -17,13 +17,15 @@
 #define __SSMENUITEM_H_DEFINED__
 
 #include <QAction>
-#include "SSXMLElement.h"
+#include "ssqtcmn.hpp"
+#include "ssqtxmle.hpp"
+class SSMenuPopup;
 
 /**
  * @ingroup ssqt_menus
  * Represents a menu item.
  * The class extends \c QAction providing the same functionality as a normal
- * menu item used by Qt. Also, the class adds the #itemID() property allowing
+ * menu item used by Qt. Also, the class adds the itemID() property allowing
  * menu itens to have numerical identifiers.
  *
  * Menu itens are defined in XML files loaded by the @ref ssqt_assets module.
@@ -35,6 +37,7 @@ class SSMenuItem : public QAction
 {
     Q_OBJECT
     Q_PROPERTY(uint itemID READ itemID)
+    Q_PROPERTY(SSMenuPopup* subMenu READ subMenu WRITE subMenu)
 
 public:
     // explicit SSMenuItem(QObject *parent = NULL);/*{{{*/
@@ -87,6 +90,26 @@ public:         // Properties
      **/
     uint itemID() const;
     /*}}}*/
+    // SSMenuPopup* subMenu() const;/*{{{*/
+    /**
+     * Gets the sub menu shown by this item.
+     * @returns A pointer to the popup menu class. Notice that this return
+     * will be valid only when this item shows a popup menu. When not, the
+     * result will be \b NULL.
+     * @since 1.1
+     **/
+    SSMenuPopup* subMenu() const;
+    /*}}}*/
+    // void subMenu(SSMenuPopup *menu);/*{{{*/
+    /**
+     * Sets the sub menu shown by this item.
+     * @param menu \c SSMenuPopup shown by this item. Can be \b NULL to remove
+     * a sub menu reference. The popup menu ownership is not taken by this
+     * item.
+     * @since 1.1
+     **/
+    void subMenu(SSMenuPopup *menu);
+    /*}}}*/
 
 public:         // Operations
     // SSMenuItem& assign(const SSMenuItem &item);/*{{{*/
@@ -123,6 +146,7 @@ protected:      // Implementation
 
 private:        // Data Members
     uint m_id;                  /**< Menu item unique identifier.   */
+    SSMenuPopup *m_menu;        /**< When this item show a sub menu.    */
 };
 /* Inline Functions {{{ */
 /* ------------------------------------------------------------------------ */
@@ -130,19 +154,19 @@ private:        // Data Members
 /* ------------------------------------------------------------------------ */
 // inline SSMenuItem::SSMenuItem(QObject *parent = NULL);/*{{{*/
 inline SSMenuItem::SSMenuItem(QObject *parent) : QAction(parent),
-    m_id(0) { }
+    m_id(0), m_menu(NULL) { }
 /*}}}*/
 // inline SSMenuItem::SSMenuItem(uint itemID, QObject *parent = NULL);/*{{{*/
 inline SSMenuItem::SSMenuItem(uint itemID, QObject *parent) : QAction(parent),
-    m_id(itemID) { }
+    m_id(itemID), m_menu(NULL) { }
 /*}}}*/
 // inline SSMenuItem::SSMenuItem(const SSMenuItem &item, QObject *parent = NULL);/*{{{*/
 inline SSMenuItem::SSMenuItem(const SSMenuItem &item, QObject *parent) :
-    QAction(parent), m_id(0) { assign(item); }
+    QAction(parent), m_id(0), m_menu(NULL) { assign(item); }
 /*}}}*/
 // inline SSMenuItem::SSMenuItem(SSXMLElement *element, QObject *parent = NULL);/*{{{*/
 inline SSMenuItem::SSMenuItem(SSXMLElement *element, QObject *parent) : QAction(parent),
-    m_id(0) { init(element); }
+    m_id(0), m_menu(NULL) { init(element); }
 /*}}}*/
 ///@} Constructors /*}}}*/
 /* ------------------------------------------------------------------------ */
@@ -151,6 +175,16 @@ inline SSMenuItem::SSMenuItem(SSXMLElement *element, QObject *parent) : QAction(
 // inline uint SSMenuItem::itemID() const;/*{{{*/
 inline uint SSMenuItem::itemID() const {
     return m_id;
+}
+/*}}}*/
+// inline SSMenuPopup* SSMenuItem::subMenu() const;/*{{{*/
+inline SSMenuPopup* SSMenuItem::subMenu() const {
+    return m_menu;
+}
+/*}}}*/
+// inline void SSMenuItem::subMenu(SSMenuPopup *menu);/*{{{*/
+inline void SSMenuItem::subMenu(SSMenuPopup *menu) {
+    m_menu = menu;
 }
 /*}}}*/
 ///@} Properties /*}}}*/

@@ -21,6 +21,8 @@
 #include "ssqtdbg.hpp"
 #include "ssqtxmle.hpp"
 #include "ssqtxmld.hpp"
+#include "ssqtmnui.hpp"
+#include "ssqtmnup.hpp"
 #include "ssqtasst.hpp"
 #include "ssqtapp.hpp"
 

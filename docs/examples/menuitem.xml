@@ -4,4 +4,5 @@
   keys="shortcut keys separated by commas"
   icon="icon resource name or number"
   checked="true or false"
+  default="default"
   />

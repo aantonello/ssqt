@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <menu>
-  <popup title="_File">
+  <popup title="_File" id="1000">
     <item id="1001" title="_New" keys="ctrl+n" />
     <item id="1002" title="_Open..." keys="ctrl+o" />
     <item id="1003" title="_Close" />
@@ -8,7 +8,7 @@
     <item id="9999" title="_Quit" />
   </popup>
   <popup ref=":/menus/#2000" />
-  <popup title="_Help">
+  <popup title="_Help" id="9000">
     <item id="9001" title="_Content..." keys="CTRL+F1" />
     <item id="9002" title="Conte_xt..." keys="F1" />
     <separator />

@@ -36,6 +36,8 @@ HEADERS += libssqt.h \
     ssqtdbg.hpp \
     ssqtxmle.hpp \
     ssqtxmld.hpp \
+    ssqtmnui.hpp \
+    ssqtmnup.hpp \
     ssqtasst.hpp \
     ssqtapp.hpp
 # HEADERS }}}
@@ -43,6 +45,8 @@ HEADERS += libssqt.h \
 SOURCES += ssqtdbg.cpp \
     ssqtxmle.cpp \
     ssqtxmld.cpp \
+    ssqtmnui.cpp \
+    ssqtmnup.cpp \
     ssqtasst.cpp \
     ssqtapp.cpp
 # SOURCES }}}

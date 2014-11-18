@@ -69,7 +69,7 @@
  *   least. In the XML the value can be ser in decimal, octal or hexadecimal
  *   notation.
  * - \b name: The object name. Can be used instead of the \c id.
- * - \b title: Text that will be used as label to show in the popup menu.
+ * - \b text: Text that will be used as label to show in the popup menu.
  *   Notice that the ampersand character is invalid on XML files. You could
  *   use the entity name (&amp;) but that is too odd. As an aid the library
  *   supports the use of an underline character before the letter to show as
@@ -94,18 +94,29 @@
  *   is a string representing boolean values \b true or \b false.  This
  *   library accepts both "true" and "yes" as \e thruty values and "false" or
  *   "no" as \e falsy values. Again, character case doesn't matter.
+ * - \b default: Used to set the default item of a popup menu. Available in
+ *   some OSes. The item will be shown using a bold font to differenciate it
+ *   from others items. Usually a default item mimics the action taken using
+ *   a double click.
  * .
  * A separator is definded as an empty element called (guess) \c separator:
  * ~~~~~~~~~~~~~~~~{.xml}
  * <separator />
  * ~~~~~~~~~~~~~~~~
+ * Separators can have all attributes set to a normal menu item. Separators
+ * having icon and text will create sections as of the function \c
+ * QMenu::addSection() was called. Others attributes are not used. Separators
+ * can be found using the standard method SSMenuPopup::itemAt(). But will not
+ * be found with the SSMenuPopup::itemWithID() method.
  * \par Popup Menus
  *
  * All items and separators must be children of an element called \b popup.
- * A \e popup must have only one attribute: its title. And it can have children
- * of types \e item, \e separator or \e popup. So, menus can nest. The \b
- * title attribute follows the same rules presented in the \e title
- * attribute of the \e item element.
+ * A \e popup can have a text and an identifier. When a \e popup menu is
+ * added as children of another \e popup menu it will create an item having
+ * the text and identifier defined in the \e popup element. Setting an
+ * identifier to a popup menu is useful to search for it with the
+ * SSMenuPopup::itemWithID() method, althouth popup menu items don't send
+ * action signals when they are clicked by the user.
  * \include popupmenu.xml
  * Popup menus can be used alone, when you need a popup menu to show in
  * a widget, for example. So, a popup menu can reside on its own XML file, as
@@ -127,7 +138,7 @@
  * \e menu element as root of a file it will automatically create a \c
  * QMenuBar object and add all \e popup menus defined in that menu bar.
  *
- * The \e menu element can have only \e popup elements as its children. Whe
+ * The \e menu element can have only \e popup elements as its children. When
  * you need to reuse already defined \e popup menus you can use the \e ref
  * attribute freely. The example below shows a (sort of) standard menu bar
  * where the "Edit" menu is reused.
@@ -136,5 +147,24 @@
  * And the "Edit" menu:
  * \include editmenu.xml
  **/
+
+/**
+ * @internal
+ * @{ *//* ---------------------------------------------------------------- */
+#define SS_MENU_NODE_ITEM           "item"
+#define SS_MENU_NODE_SEPARATOR      "separator"
+#define SS_MENU_NODE_POPUP          "popup"
+#define SS_MENU_NODE_MENU           "menu"
+
+#define SS_MENU_ATTR_ID             "id"
+#define SS_MENU_ATTR_NAME           "name"
+#define SS_MENU_ATTR_TEXT           "text"
+#define SS_MENU_ATTR_DESC           "desc"
+#define SS_MENU_ATTR_KEYS           "keys"
+#define SS_MENU_ATTR_ICON           "icon"
+#define SS_MENU_ATTR_CHECKED        "checked"
+#define SS_MENU_ATTR_DEFAULT        "default"
+#define SS_MENU_ATTR_REF            "ref"
+///@} internal
 
 #endif /* __STDPLX_HPP_DEFINED__ */

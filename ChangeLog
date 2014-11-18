@@ -1,7 +1,7 @@
-Build: 8	Version: 1.1	Branch: Master
+Build: 10	Version: 1.1	Branch: Master
 
-	* ssqtxmle.hpp (has()): New method added.
-	* res/{menuitem, popupmenu, menubar, editmenu}.xml: Several
-	  example files.
-	* ssqtmnui.{hpp,cpp}: SSMenuItem class added.
-	* ssqtmnup.hpp: SSMenuPopup class started.
+	* ssqtmnup.{hpp,cpp}: SSMenuPopup class finished.
+	* ssqt.pro: Added references to SSMenuItem class files and
+	  SSMenuPopup class files.
+	* libssqt.h: Added include directive for ssqtmnui.hpp and
+	  ssqtmnup.hpp files.

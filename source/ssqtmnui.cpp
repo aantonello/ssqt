@@ -14,6 +14,7 @@
  * may change it if you like. Or just use it as it is.
  */
 #include "stdplx.hpp"
+#include "ssqtxmle.hpp"
 #include "ssqtmnui.hpp"
 
 /* ===========================================================================
@@ -44,6 +45,7 @@ SSMenuItem& SSMenuItem::assign(const SSMenuItem &item)
         setChecked( item.isChecked() );
 
     m_id = item.itemID();
+    m_menu = item.m_menu;
     return *this;
 }
 /*}}}*/
@@ -56,39 +58,41 @@ SSMenuItem& SSMenuItem::assign(const SSMenuItem &item)
 void SSMenuItem::init(SSXMLElement *element)
 {
     if (!element) return;
-    if (element->elementName == "separator")
-    {
-        setSeparator(true);
+    if ((element->elementName != SS_MENU_NODE_SEPARATOR)
+        && (element->elementName != SS_MENU_NODE_ITEM))
         return;
-    }
 
-    if (element->elementName != "item") return;
+    if (element->elementName == SS_MENU_NODE_SEPARATOR)
+        setSeparator(true);
 
-    m_id = (uint)element->intValueOf("id");
-    setText( element->attribute("title").replace('_', '&') );
-    setStatusTip( element->attribute("desc") );
+    m_id = (uint)element->intValueOf(SS_MENU_ATTR_ID);
+    setText( element->attribute(SS_MENU_ATTR_TEXT).replace('_', '&') );
+    setStatusTip( element->attribute(SS_MENU_ATTR_DESC) );
 
-    if (element->has("checked"))
+    if (element->has(SS_MENU_ATTR_CHECKED))
     {
         setCheckable(true);
-        setChecked( element->boolValueOf("checked") );
+        setChecked( element->boolValueOf(SS_MENU_ATTR_CHECKED) );
     }
 
-    if (element->has("icon"))
+    if (element->has(SS_MENU_ATTR_ICON))
     {
-        QIcon menuIcon( element->attribute("icon") );
+        QIcon menuIcon( element->attribute(SS_MENU_ATTR_ICON) );
 
         setIcon( menuIcon );
         setIconVisibleInMenu( true );
     }
 
-    if (element->has("keys"))
+    if (element->has(SS_MENU_ATTR_KEYS))
     {
-        QKeySequence keys( element->attribute("keys") );
+        QKeySequence keys( element->attribute(SS_MENU_ATTR_KEYS) );
 
         setShortcut( keys );
         setShortcutContext( Qt::WindowShortcut );
     }
+
+    if (element->has(SS_MENU_ATTR_NAME))
+        setObjectName( element->attribute(SS_MENU_ATTR_NAME) );
 }
 /*}}}*/
 ///@} Implementation
