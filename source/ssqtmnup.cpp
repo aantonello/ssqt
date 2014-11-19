@@ -166,6 +166,11 @@ error_t SSMenuPopup::loadMenu(uint resID)
     return loadMenu(resMenu.arg(resID));
 }
 /*}}}*/
+
+/* ---------------------------------------------------------------------------
+ * Internal Operations
+ * ------------------------------------------------------------------------ */
+
 // void    SSMenuPopup::removeAll();/*{{{*/
 void SSMenuPopup::removeAll()
 {
@@ -183,4 +188,3 @@ void SSMenuPopup::removeAll()
     };
 }
 /*}}}*/
-

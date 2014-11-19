@@ -23,7 +23,9 @@
 #include "ssqtxmld.hpp"
 #include "ssqtmnui.hpp"
 #include "ssqtmnup.hpp"
+#include "ssqtmenu.hpp"
 #include "ssqtasst.hpp"
+#include "ssqtmain.hpp"
 #include "ssqtapp.hpp"
 
 #endif /* __LIBSSQT_H_DEFINED__ */

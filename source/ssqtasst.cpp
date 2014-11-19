@@ -15,8 +15,20 @@
  */
 #include "stdplx.hpp"
 #include "ssqtasst.hpp"
+#include "ssqtcmn.hpp"
+#include "ssqtxmle.hpp"
+#include "ssqtxmld.hpp"
+#include "ssqtmnui.hpp"
+#include "ssqtmnup.hpp"
+#include "ssqtmenu.hpp"
 
 namespace ss {
+/**
+ * @internal
+ * @{ *//* ---------------------------------------------------------------- */
+static QString const sc__path(":/%1/#%2");
+///@} internal
+
 // QString asset_string(uint resID, size_t size = 1024);/*{{{*/
 QString asset_string(uint resID, size_t size)
 {
@@ -41,6 +53,52 @@ QString asset_string(uint resID, size_t size)
     free(szBuffer);
     return result;
 #endif
+}
+/*}}}*/
+// QByteArray asset_file(uint resID, const char* type);/*{{{*/
+QByteArray asset_file(uint resID, const char* type)
+{
+    QFile resFile(sc__path.arg(type).arg(resID));
+    return resFile.readAll();
+}
+/*}}}*/
+// QIcon asset_icon(uint resID);/*{{{*/
+QIcon asset_icon(uint resID)
+{
+    return QIcon(sc__path.arg("ico").arg(resID));
+}
+/*}}}*/
+// QImage asset_image(uint resID, const char *type = "png");/*{{{*/
+QImage asset_image(uint resID, const char *type)
+{
+    return QImage(sc__path.arg(type).arg(resID));
+}
+/*}}}*/
+// QPixmap asset_pixmap(uint resID, const char* type = "png");/*{{{*/
+QPixmap asset_pixmap(uint resID, const char* type)
+{
+    return QPixmap(sc__path.arg(type).arg(resID));
+}
+/*}}}*/
+// SSXMLDocument asset_xml(uint resID, const char *type);/*{{{*/
+SSXMLDocument asset_xml(uint resID, const char *type)
+{
+    return SSXMLDocument(sc__path.arg(type).arg(resID));
+}
+/*}}}*/
+// SSMenu* asset_menu(uint resID);/*{{{*/
+SSMenu* asset_menu(uint resID)
+{
+    SSXMLDocument xml(asset_xml(resID, "menu"));
+
+    return new SSMenu(&xml);
+}
+/*}}}*/
+// SSMenuPopup* asset_popup(uint resID);/*{{{*/
+SSMenuPopup* asset_popup(uint resID)
+{
+    SSXMLDocument document(asset_xml(resID, "menu"));
+    return new SSMenuPopup( &document );
 }
 /*}}}*/
 };

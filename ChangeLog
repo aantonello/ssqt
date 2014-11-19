@@ -1,7 +1,8 @@
-Build: 10	Version: 1.1	Branch: Master
+Build: 14	Version: 1.1	Branch: Master
 
-	* ssqtmnup.{hpp,cpp}: SSMenuPopup class finished.
-	* ssqt.pro: Added references to SSMenuItem class files and
-	  SSMenuPopup class files.
-	* libssqt.h: Added include directive for ssqtmnui.hpp and
-	  ssqtmnup.hpp files.
+	* ssqtmenu.{hpp,cpp}: SSMenu class added.
+	* ssqtxmld.{hpp,cpp}: New methods added.
+	* ssqtasst.{hpp,cpp}: New functions added.
+	* ssqtmnup.{hpp,cpp}: New methods added.
+	* libssqt.h: Added include statement to the ssqtmenu.hpp file.
+	* ssqtmain.{hpp,cpp}: New class added.

@@ -182,7 +182,6 @@ public:
     SSMenuPopup* menuAt(uint position) const;
     /*}}}*/
     //@}
-
 public:
     /** @name SSMenuItem Operations */ //@{
     // SSMenuItem* addItem(SSMenuItem *item);/*{{{*/
@@ -224,7 +223,6 @@ public:
     SSMenuItem* addItem(SSXMLElement *element);
     /*}}}*/
     //@}
-
 public:
     /** @name SSMenuPopup Operations */ //@{
     // SSMenuPopup* addPopup(SSMenuPopup *popup);/*{{{*/
@@ -258,7 +256,6 @@ public:
     SSMenuPopup* addPopup(SSXMLElement *element);
     /*}}}*/
     //@}
-
 public:
     /** @name Operations */ //@{
     // error_t loadMenu(SSXMLElement *element);/*{{{*/
@@ -288,7 +285,7 @@ public:
      * @param menuResource String with the path of the file or resource. If
      * this is a file the path must be absolute. If it is a resource the
      * string must start with colons. A possible value for a popup menu in
-     * a resource is ":/menus/#2001".
+     * a resource is ":/menus/\#2001".
      * @returns An error code if the function succeeds the result will be \c
      * SSNO_ERROR.
      * @since 1.1
@@ -311,6 +308,9 @@ public:
      **/
     error_t loadMenu(uint resID);
     /*}}}*/
+    //@}
+private:
+    /** @name Internal Operations */ //@{
     // void    removeAll();/*{{{*/
     /**
      * Releases all items in this popup menu.
@@ -319,7 +319,6 @@ public:
     void    removeAll();
     /*}}}*/
     //@}
-
 protected:      // Data Members
     QList<SSMenuItem *> m_items;    /**< Items of this popup menu. */
     uint m_id;                      /**< Item identifier.          */

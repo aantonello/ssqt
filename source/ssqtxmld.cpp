@@ -139,6 +139,19 @@ error_t SSXMLDocument::write(QIODevice *device, const char *encoding)
 /*}}}*/
 ///@} Write Operations
 
+/* ------------------------------------------------------------------------ */
+/*! @name Overloaded Operators */ //@{
+/* ------------------------------------------------------------------------ */
+// SSXMLDocument& SSXMLDocument::operator=(const SSXMLDocument &document);/*{{{*/
+SSXMLDocument& SSXMLDocument::operator=(const SSXMLDocument &document)
+{
+    fileName = document.fileName;
+    assign( &document );
+    return *this;
+}
+/*}}}*/
+///@} Overloaded Operators
+
 // static error_t __xml_readXmlStream(QXmlStreamReader *reader, SSXMLElement *root);/*{{{*/
 static error_t __xml_readXmlStream(QXmlStreamReader *reader, SSXMLElement *root)
 {

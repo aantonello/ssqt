@@ -64,6 +64,14 @@ public:     // Constructors & Destructor
      **/
     SSXMLDocument(const QByteArray &byteArray);
     /*}}}*/
+    // SSXMLDocument(const SSXMLDocument &document);/*{{{*/
+    /**
+     * Copy constructor.
+     * @param document Another document to copy.
+     * @since 1.1
+     **/
+    SSXMLDocument(const SSXMLDocument &document);
+    /*}}}*/
 
 public:     // Read Operations
     // error_t open(const QString &fileName, const char *encoding = NULL);/*{{{*/
@@ -216,6 +224,17 @@ public:     // Write Operations
     error_t write(QIODevice *device, const char *encoding = NULL);
     /*}}}*/
 
+public:     // Overloaded Operators
+    // SSXMLDocument& operator=(const SSXMLDocument &document);/*{{{*/
+    /**
+     * Copy operator.
+     * @param document Another document to copy.
+     * @returns \b this.
+     * @since 1.1
+     **/
+    SSXMLDocument& operator=(const SSXMLDocument &document);
+    /*}}}*/
+
 public:     // Data Members
     QString fileName;               /**< Original file name.    */
 };
@@ -239,6 +258,11 @@ inline SSXMLDocument::SSXMLDocument(const QFile &file) : SSXMLElement() {
 // inline SSXMLDocument::SSXMLDocument(const QByteArray &byteArray);/*{{{*/
 inline SSXMLDocument::SSXMLDocument(const QByteArray &byteArray) : SSXMLElement() {
     open(byteArray);
+}
+/*}}}*/
+// inline SSXMLDocument::SSXMLDocument(const SSXMLDocument &document);/*{{{*/
+inline SSXMLDocument::SSXMLDocument(const SSXMLDocument &document) : SSXMLElement() {
+    this->operator=(document);
 }
 /*}}}*/
 ///@} Constructors & Destructor /*}}}*/

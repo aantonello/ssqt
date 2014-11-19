@@ -125,7 +125,7 @@
  * don't need to rewrite the popup menu in another XML file, you use the \e
  * ref attribute, as in the following example.
  * ~~~~~~~~~~~~~~~~{.xml}
- * <popup ref=":/menus/#2001" />
+ * <popup ref=":/menu/#2001" />
  * ~~~~~~~~~~~~~~~~
  * The library will load the popup menu in the file aliased by the \e #2001
  * identifier and totaly replace the \e popup element with the popup menu

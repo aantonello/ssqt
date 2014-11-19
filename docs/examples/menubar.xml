@@ -7,7 +7,7 @@
     <separator />
     <item id="9999" title="_Quit" />
   </popup>
-  <popup ref=":/menus/#2000" />
+  <popup ref=":/menu/#2000" />
   <popup title="_Help" id="9000">
     <item id="9001" title="_Content..." keys="CTRL+F1" />
     <item id="9002" title="Conte_xt..." keys="F1" />
