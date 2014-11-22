@@ -19,7 +19,6 @@
 #include "ssqtdbg.hpp"
 #include "ssqtxmle.hpp"
 #include "ssqtxmld.hpp"
-#include <errno.h>
 
 /* ===========================================================================
  * SSXMLDocument class
@@ -47,18 +46,26 @@ static error_t __xml_readXmlStream(QXmlStreamReader *reader, SSXMLElement *root)
 // error_t SSXMLDocument::open(const QString &fileName, const char *encoding = NULL);/*{{{*/
 error_t SSXMLDocument::open(const QString &fileName, const char *encoding)
 {
-    return open(QFile(fileName), encoding);
+    QFile file(fileName);
+    return open(file, encoding);
 }
 /*}}}*/
-// error_t SSXMLDocument::open(const QFile &file, const char *encoding = NULL);/*{{{*/
-error_t SSXMLDocument::open(const QFile &file, const char *encoding)
+// error_t SSXMLDocument::open(QFile &file, const char *encoding = NULL);/*{{{*/
+error_t SSXMLDocument::open(QFile &file, const char *encoding)
 {
     Q_UNUSED(encoding);
 
-    QXmlStreamReader stream(const_cast<QFile *>(&file));
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        sstrace("Error: '%s'", SST(file.errorString()));
+        return SSE_IO;
+    }
+
+    QXmlStreamReader stream(&file);
     error_t result = SSNO_ERROR;
 
     result = __xml_readXmlStream(&stream, this);
+    file.close();
     if (result == SSNO_ERROR)
         fileName = file.fileName();
     else
@@ -171,6 +178,8 @@ static error_t __xml_readXmlStream(QXmlStreamReader *reader, SSXMLElement *root)
 
         if (type == QXmlStreamReader::EndElement)
             current = current->parentElement;
+        else if ((type == QXmlStreamReader::Characters) && (current != NULL))
+            current->text( reader->text().toString() );    /* Fails if 'current' has children. */
         else if (type == QXmlStreamReader::StartElement)
         {
             if (current)
@@ -197,6 +206,7 @@ static error_t __xml_readXmlStream(QXmlStreamReader *reader, SSXMLElement *root)
     if (type == QXmlStreamReader::Invalid)
     {
         sstrace("%s\n", SST(reader->errorString()));
+        ssprint("=> at line: %d, column: %d, char offset: %d", reader->lineNumber(), reader->columnNumber(), reader->characterOffset());
         switch (reader->error())
         {
         case QXmlStreamReader::NotWellFormedError:

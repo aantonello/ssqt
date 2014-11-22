@@ -28,7 +28,10 @@
  * \ingroup ssqt_ui
  * Main window application class.
  * This class extends \c QMainWindow providing some facilities used with menu
- * classes and others objects defined in this library.
+ * classes and others objects defined in this library. The default constructor
+ * register the class instance in the SSApplication class instance if it was
+ * created. This makes possible to get the SSMainWnd instance through its
+ * member function SSApplication::mainWindow().
  * @since 1.1
  *//* --------------------------------------------------------------------- */
 class SSMainWnd : public QMainWindow
@@ -67,7 +70,10 @@ public:
     // SSMenu* mainMenu() const;/*{{{*/
     /**
      * Retrieves the \c SSMenu instance bound to this window.
-     * @return The \c SSMenu object pointer add as menu bar of this window.
+     * @return The \c SSMenu object pointer added as menu bar of this window.
+     * @remarks This operations uses the \c qobject_cast() template function
+     * to find out if the current \c QMenuBar instance is really an \c SSMenu
+     * class. When not the result will be \b NULL.
      * @since 1.1
      **/
     SSMenu* mainMenu() const;
@@ -75,14 +81,6 @@ public:
     //@}
 };
 /* Inline Functions {{{ */
-/* ---------------------------------------------------------------------------
- * Constructors & Destructor {{{
- * ------------------------------------------------------------------------ */
-// inline SSMainWnd::SSMainWnd(QWidget *parent = NULL, Qt::WindowFlags flags = 0);/*{{{*/
-inline SSMainWnd::SSMainWnd(QWidget *parent, Qt::WindowFlags flags) :
-    QMainWindow(parent, flags) { }
-/*}}}*/
-// Constructors & Destructor }}}
 /* ---------------------------------------------------------------------------
  * SSMenu Operations {{{
  * ------------------------------------------------------------------------ */
@@ -94,7 +92,7 @@ inline SSMenu* SSMainWnd::loadMenu(uint resID) {
 /*}}}*/
 // inline SSMenu* SSMainWnd::mainMenu() const;/*{{{*/
 inline SSMenu* SSMainWnd::mainMenu() const {
-    return static_cast<SSMenu *>(menuBar());
+    return qobject_cast<SSMenu *>(menuBar());
 }
 /*}}}*/
 // SSMenu Operations }}}

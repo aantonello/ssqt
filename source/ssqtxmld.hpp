@@ -46,14 +46,14 @@ public:     // Constructors & Destructor
      **/
     SSXMLDocument(const QString &fileName);
     /*}}}*/
-    // SSXMLDocument(const QFile &file);/*{{{*/
+    // SSXMLDocument(QFile &file);/*{{{*/
     /**
      * Loads a file from disk.
      * @param file The file to be loaded.
      * @remarks This constructor call #open(const QFile &, const char *).
      * @since 1.1
      **/
-    SSXMLDocument(const QFile &file);
+    SSXMLDocument(QFile &file);
     /*}}}*/
     // SSXMLDocument(const QByteArray &byteArray);/*{{{*/
     /**
@@ -99,7 +99,7 @@ public:     // Read Operations
      **/
     error_t open(const QString &fileName, const char *encoding = NULL);
     /*}}}*/
-    // error_t open(const QFile &file, const char *encoding = NULL);/*{{{*/
+    // error_t open(QFile &file, const char *encoding = NULL);/*{{{*/
     /**
      * Loads a file from disk or resource.
      * @param file \c QFile object with the file reference to be loaded.
@@ -120,7 +120,7 @@ public:     // Read Operations
      * @sa ssqt_errors
      * @since 1.1
      **/
-    error_t open(const QFile &file, const char *encoding = NULL);
+    error_t open(QFile &file, const char *encoding = NULL);
     /*}}}*/
     // error_t open(const QByteArray &byteArray, const char *encoding = NULL);/*{{{*/
     /**
@@ -250,8 +250,8 @@ inline SSXMLDocument::SSXMLDocument(const QString &fileName) : SSXMLElement() {
     open(fileName);
 }
 /*}}}*/
-// inline SSXMLDocument::SSXMLDocument(const QFile &file);/*{{{*/
-inline SSXMLDocument::SSXMLDocument(const QFile &file) : SSXMLElement() {
+// inline SSXMLDocument::SSXMLDocument(QFile &file);/*{{{*/
+inline SSXMLDocument::SSXMLDocument(QFile &file) : SSXMLElement() {
     open(file);
 }
 /*}}}*/

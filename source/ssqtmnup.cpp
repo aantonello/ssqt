@@ -121,9 +121,10 @@ error_t SSMenuPopup::loadMenu(SSXMLElement *element)
         addPopup(subMenu);
         return SSNO_ERROR;
     }
+    QString text( element->attribute(SS_MENU_ATTR_TEXT) );
 
     m_id = element->intValueOf(SS_MENU_ATTR_ID);
-    setTitle( element->attribute(SS_MENU_ATTR_TEXT) );
+    setTitle( text.replace('_', '&') );
 
     if (element->has(SS_MENU_ATTR_NAME))
         setObjectName( element->attribute(SS_MENU_ATTR_NAME) );

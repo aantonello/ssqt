@@ -14,9 +14,21 @@
  * may change it if you like. Or just use it as it is.
  */
 #include "stdplx.hpp"
+#include "ssqtapp.hpp"
 #include "ssqtmain.hpp"
 
 /* ===========================================================================
  * SSMainWnd Class
  * ======================================================================== */
+
+/* ---------------------------------------------------------------------------
+ * Constructors & Destructor
+ * ------------------------------------------------------------------------ */
+
+// SSMainWnd::SSMainWnd(QWidget *parent = NULL, Qt::WindowFlags flags = 0);/*{{{*/
+SSMainWnd::SSMainWnd(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
+{
+    if (ss::App != NULL) ss::App->m_mainWnd = this;
+}
+/*}}}*/
 

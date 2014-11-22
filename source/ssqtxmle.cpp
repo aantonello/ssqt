@@ -79,6 +79,12 @@ QString SSXMLElement::remove(const QString &attrName)
     return m_attrs.take(attrName);
 }
 /*}}}*/
+// void SSXMLElement::removeAllAttributes();/*{{{*/
+void SSXMLElement::removeAllAttributes()
+{
+    m_attrs.clear();
+}
+/*}}}*/
 ///@} Attributes Operations
 
 /* ------------------------------------------------------------------------ */
@@ -148,6 +154,13 @@ bool SSXMLElement::remove(uint index)
     delete element;
 
     return true;
+}
+/*}}}*/
+// void SSXMLElement::removeAllElements();/*{{{*/
+void SSXMLElement::removeAllElements()
+{
+    qDeleteAll(m_nodes);
+    m_nodes.clear();
 }
 /*}}}*/
 ///@} Child Element Operations

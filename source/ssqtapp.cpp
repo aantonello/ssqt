@@ -14,15 +14,52 @@
  * may change it if you like. Or just use it as it is.
  */
 #include "stdplx.hpp"
+#include "ssqtmain.hpp"
 #include "ssqtapp.hpp"
+
+/* ===========================================================================
+ * UI Variables
+ * ======================================================================== */
+namespace ss {
+    SSApplication* App = NULL;
+};
 
 /* ===========================================================================
  * SSApplication Class
  * ======================================================================== */
 
-/* ------------------------------------------------------------------------ */
-/*! \name Operations */ //@{
-/* ------------------------------------------------------------------------ */
+/* ---------------------------------------------------------------------------
+ * Constructors & Destructor
+ * ------------------------------------------------------------------------ */
+// SSApplication::SSApplication(int &argc, char** argv);/*{{{*/
+SSApplication::SSApplication(int &argc, char** argv) : QApplication(argc, argv),
+    m_shared(NULL), m_mainWnd(NULL)
+{
+    if (ss::App == NULL) ss::App = this;
+}
+/*}}}*/
+// SSApplication::~SSApplication();/*{{{*/
+SSApplication::~SSApplication()
+{
+    if (m_shared != NULL) {
+        m_shared->detach();
+    }
+}
+/*}}}*/
+
+/* ---------------------------------------------------------------------------
+ * Static Functions
+ * ------------------------------------------------------------------------ */
+// SSApplication* SSApplication::currentApp();/*{{{*/
+SSApplication* SSApplication::currentApp()
+{
+    return ss::App;
+}
+/*}}}*/
+
+/* ---------------------------------------------------------------------------
+ * Operations
+ * ------------------------------------------------------------------------ */
 // bool SSApplication::ensureSingleInstance(const QString &applicationKey);/*{{{*/
 bool SSApplication::ensureSingleInstance(const QString &applicationKey)
 {
@@ -37,4 +74,10 @@ bool SSApplication::ensureSingleInstance(const QString &applicationKey)
     return m_shared->create(sizeof(int));
 }
 /*}}}*/
-///@} Operations
+// SSMainWnd* SSApplication::mainWindow() const;/*{{{*/
+SSMainWnd* SSApplication::mainWindow() const
+{
+    return m_mainWnd;
+}
+/*}}}*/
+

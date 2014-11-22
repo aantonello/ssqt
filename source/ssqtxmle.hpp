@@ -24,6 +24,14 @@
 /**
  * @ingroup ssqt_xml
  * An XML Element object.
+ * An element can have any number of attributes and any number of children
+ * elements. Also, it can have text, but only if it doesn't have children
+ * elements. When an element has children the #text() member function returns
+ * an empty string. In the same way, the #text(const QString&) member function
+ * will fail when the element has children. Children elements has priority.
+ * When you add a child element to an element that has text, the text will be
+ * released. If you need to add text to some element that already has children
+ * you need to remove all children before setting the text.
  * @since 1.1
  *//* --------------------------------------------------------------------- */
 class SSXMLElement
@@ -74,6 +82,28 @@ public:         // Attributes
      * @since 1.1
      **/
     size_t numberOfChildren() const;
+    /*}}}*/
+    // QString text() const;/*{{{*/
+    /**
+     * Retrieves the text content of this element.
+     * @return A \c QString object with the text of the element if it has one.
+     * Otherwise an empty string.
+     * @remarks The text content is always ignored if the element has
+     * children. So, if this element has children this operation will return
+     * an empty string.
+     * @since 1.1
+     **/
+    QString text() const;
+    /*}}}*/
+    // bool    text(const QString &elementText);/*{{{*/
+    /**
+     * Sets or changes the text content of this element.
+     * @param elementText \c QString with the text to be set.
+     * @return \b true means the text was set. If this element has any child
+     * the function will fail and return \b false.
+     * @since 1.1
+     **/
+    bool    text(const QString &elementText);
     /*}}}*/
 
 public:         // Attributes Operations
@@ -175,6 +205,13 @@ public:         // Attributes Operations
      **/
     QString remove(const QString &attrName);
     /*}}}*/
+    // void removeAllAttributes();/*{{{*/
+    /**
+     * Remove all attributes of this element.
+     * @since 1.1
+     **/
+    void removeAllAttributes();
+    /*}}}*/
 
 public:         // Child Element Operations
     // int indexOf(const SSXMLElement *element) const;/*{{{*/
@@ -264,6 +301,13 @@ public:         // Child Element Operations
      * @since 1.1
      **/
     bool remove(uint index);
+    /*}}}*/
+    // void removeAllElements();/*{{{*/
+    /**
+     * Remove all children elements from this element.
+     * @since 1.1
+     **/
+    void removeAllElements();
     /*}}}*/
 
 public:         // Overridable Operations
@@ -373,6 +417,7 @@ public:         // Data Members
 protected:
     QList<SSXMLElement*> m_nodes;       /**< List of children elements.     */
     QHash<QString, QString> m_attrs;    /**< Attributes of this element.    */
+    QString m_text;                     /**< Text of this element.          */
 };
 /* Inlined Functions {{{ */
 /* ------------------------------------------------------------------------ */
@@ -454,6 +499,17 @@ inline size_t SSXMLElement::numberOfAttributes() const {
 // inline size_t SSXMLElement::numberOfChildren() const;/*{{{*/
 inline size_t SSXMLElement::numberOfChildren() const {
     return m_nodes.count();
+}
+/*}}}*/
+// inline QString SSXMLElement::text() const;/*{{{*/
+inline QString SSXMLElement::text() const {
+    return (hasChildren() ? QString() : m_text);
+}
+/*}}}*/
+// inline bool    SSXMLElement::text(const QString &elementText);/*{{{*/
+inline bool SSXMLElement::text(const QString &elementText) {
+    if (hasChildren()) return false;
+    m_text = elementText; return true;
 }
 /*}}}*/
 ///@} Attributes /*}}}*/
