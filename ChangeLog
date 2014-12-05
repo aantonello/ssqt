@@ -1,17 +1,4 @@
 Build: 20	Version: 1.1	Branch: Master
 
-	* ssqtmnup.cpp (loadMenu(SSXMLElement*)): Bug, forget to change
-	  'Alt' character shortcut from '_' to '&'.
-	* ssqtxmld.{hpp,cpp} (open(const QFile, const char*)): Removed
-	  'const' keyword from first argument.
-	* ssqtxmld.cpp (open(QFile, const char*)): Bug. 'file' argument
-	  was not opened before passing to QXmlStreamReader.
-	* ssqtxmle.{hpp,cpp} (m_text): New data member added.
-	* ssqtxmle.{hpp,cpp} (text()): New overloaded member function to
-	  get and set the element's content text.
-	* ssqtxmle.{hpp,cpp} (removeAllElements()): New member function to
-	  remove all children of an element.
-	* ssqtxmle.{hpp,cpp} (removeAllAttributes()): New member function
-	  to remove all attributes of an element.
-	* ssqtxmld.cpp (__xml_readXmlStream()): Updated to support reading
-	  of element's text.
+	* ssqttlbi.{hpp,cpp}: SSButtonItem class added.
+	* docs/examples/toolbar.xml: Example for toolbar XML resource.

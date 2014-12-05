@@ -6,7 +6,7 @@
  * @date   novembro 16, 2014
  * @since  Super Simple for Qt 5 1.1
  *
- * \copyright
+ * @copyright
  * This file is provided in hope that it will be useful to someone. It is
  * offered in public domain. You may use, modify or distribute it freely.
  *

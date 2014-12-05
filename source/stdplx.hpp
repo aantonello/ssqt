@@ -149,6 +149,65 @@
  **/
 
 /**
+ * \ingroup ssqt_ui
+ * \defgroup ssqt_toolbar Toolbars
+ * Support for toolbars and toolbar buttons.
+ * The Qt library already provide support for advanced contruction of toolbars
+ * with buttons and widgets of several forms including users extensions. The
+ * \e ssqt library extends that funcionality providing the way to load toolbar
+ * definitions from XML resources in the same way provided by \ref ssqt_menus
+ * module.
+ *
+ * The basic class of this group is \c SSButtonItem. It is similar to \c
+ * SSMenuItem. It has an \c itemID property holding its unique identifier.
+ * This identifier can be set in the constructor or in the XML resource. When
+ * the \c QToolBar::actionTriggered() signal is called this property can be
+ * queried to assure the source button clicked.
+ *
+ * The XML format for specifying the toolbar resource is similar to the XML
+ * used in menus. By the way, button itens can also have popup menus shown
+ * when they are clicked. See the following example:
+ * \include toolbar.xml
+ * With this example you can see that the structure is almost the same as the
+ * XML used to set menus. The root element is a "toolbar" element. It can have
+ * only "button" and "separator" elements. The "button" element can be
+ * identified by its unique identifier, defined in the "id" attribute, or by
+ * its object name, defined in the "name" attribute. The attributes accepted
+ * by the "button" element are:
+ * - \b id: The unique identifier of the button. Can be retrieved by \c
+ *   SSButtonItem::itemID() member function. It is a standard Qt property so
+ *   it also can be retrieved using \c QObject::property() member function.
+ * - \b name: If set will be used to define the object name. It must be
+ *   a valid object name for this purpose.
+ * - \b title: Toolbar buttons usually show icons so the user can identify its
+ *   operations. Texts are shown in the button's tooltip window. This depends
+ *   on the style set in the \c QToolBar object or \c QMainWindow object. See
+ *   the documentation of those objects to understand how this works. This
+ *   value will be used in the \c QAction::toolTip() member function.
+ * - \b keys: Keyboard shortcut to this button. This works in the same way as
+ *   in the \c SSMenuItem object. Set keyboard shortcuts for buttons that
+ *   don't have menu counter parts.
+ * - \b icon: Buttons usually have icons. You can set the icon image for
+ * a button in two ways:
+ *   -# Using the complete path to the image, like: <code>:/ico/#3001</code>.
+ *   -# Using only the image alias, like: <code>#3001</code>. When set like
+ *      this the image must lie in the "ico" resource group. See \ref
+ *      ssqt_assets module.
+ *   .
+ * - \b checked: Sets this button as \e checkable. The presence of the
+ *   attribute is enough to set the button as \e checkable. The attribute
+ *   value, \b true or \b false, define if it will be first shown checked or
+ *   not.
+ * .
+ * \c SSButtonItem can also show menus. So the "button" element accepts
+ * "popup" elements as it's child. Only one "popup" element is accepted. The
+ * menu will be shown when the button is clicked. If you need a button that
+ * does an action when clicked and shows a menu by an attached down arrow key
+ * you should use the \c QToolButton object. Create one, set it up and add it
+ * using the \c QWidgetAction::setDefaultWidget() member function.
+ **/
+
+/**
  * @internal
  * @{ *//* ---------------------------------------------------------------- */
 #define SS_MENU_NODE_ITEM           "item"
@@ -165,6 +224,9 @@
 #define SS_MENU_ATTR_CHECKED        "checked"
 #define SS_MENU_ATTR_DEFAULT        "default"
 #define SS_MENU_ATTR_REF            "ref"
+
+#define SS_XML_NODE_TOOLBAR         "toolbar"
+#define SS_XML_NODE_BUTTON          "button"
 ///@} internal
 
 #endif /* __STDPLX_HPP_DEFINED__ */

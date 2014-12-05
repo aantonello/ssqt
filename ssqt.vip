@@ -42,6 +42,10 @@ ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
      ssqtmenu.cpp
     }
    }
+   Toolbar=. {
+    ssqttlbi.hpp
+    ssqttlbi.cpp
+   }
    SSMainWnd=. {
     ssqtmain.hpp
     ssqtmain.cpp
@@ -64,6 +68,7 @@ ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
    popupmenu.xml
    menubar.xml
    editmenu.xml
+   toolbar.xml
   }
  }
  .gitignore
