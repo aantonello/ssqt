@@ -1,4 +1,5 @@
-Build: 20	Version: 1.1	Branch: Master
+Build: 23	Version: 1.1	Branch: Master
 
-	* ssqttlbi.{hpp,cpp}: SSButtonItem class added.
-	* docs/examples/toolbar.xml: Example for toolbar XML resource.
+	* ssqtasst.{hpp,cpp} (asset_file(const QString&)): New function
+	  added.
+	* ssqttlbr.{hpp,cpp}: SSToolbar class added.

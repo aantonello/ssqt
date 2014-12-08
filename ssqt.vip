@@ -43,8 +43,14 @@ ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
     }
    }
    Toolbar=. {
-    ssqttlbi.hpp
-    ssqttlbi.cpp
+    SSButtonItem=. {
+     ssqttlbi.hpp
+     ssqttlbi.cpp
+    }
+    SSToolbar=. {
+     ssqttlbr.hpp
+     ssqttlbr.cpp
+    }
    }
    SSMainWnd=. {
     ssqtmain.hpp

@@ -100,6 +100,17 @@ namespace ss {
  **/
 QString asset_string(uint resID, size_t size = 1024);
 /*}}}*/
+// QByteArray    asset_file(const QString &resPath);/*{{{*/
+/**
+ * \ingroup ssqt_assets
+ * Loads a file stream from the assets resource.
+ * @param resPath The resource path. Must start with ':' character. When not,
+ * it will be recognized as a disk file.
+ * @return A \c QByteArray with the stream data loaded in memory.
+ * @since 1.1
+ **/
+QByteArray asset_file(const QString &resPath);
+/*}}}*/
 // QByteArray    asset_file(uint resID, const char* type);/*{{{*/
 /**
  * \ingroup ssqt_assets

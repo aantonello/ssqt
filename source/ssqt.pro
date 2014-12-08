@@ -34,23 +34,27 @@ HEADERS += libssqt.h \
     ssqtcmn.hpp \
     ssqterr.hpp \
     ssqtdbg.hpp \
+    ssqtasst.hpp \
     ssqtxmle.hpp \
     ssqtxmld.hpp \
     ssqtmnui.hpp \
     ssqtmnup.hpp \
     ssqtmenu.hpp \
-    ssqtasst.hpp \
+    ssqttlbi.hpp \
+    ssqttlbr.hpp \
     ssqtmain.hpp \
     ssqtapp.hpp
 # HEADERS }}}
 # SOURCES: .c or .cpp files to be compiled {{{
 SOURCES += ssqtdbg.cpp \
+    ssqtasst.cpp \
     ssqtxmle.cpp \
     ssqtxmld.cpp \
     ssqtmnui.cpp \
     ssqtmnup.cpp \
     ssqtmenu.cpp \
-    ssqtasst.cpp \
+    ssqttlbi.cpp \
+    ssqttlbr.cpp \
     ssqtmain.cpp \
     ssqtapp.cpp
 # SOURCES }}}

@@ -18,6 +18,7 @@
 #include "ssqterr.hpp"
 #include "ssqtdbg.hpp"
 #include "ssqtasst.hpp"
+#include "ssqttlbi.hpp"
 
 /* ===========================================================================
  * SSButtonItem Class
@@ -67,7 +68,7 @@ void SSButtonItem::init(SSXMLElement *element)
         setSeparator(true);
 
     m_id = (uint)element->intValueOf(SS_MENU_ATTR_ID);
-    setText( element->attribute(SS_MENU_ATTR_TEXT).replace('_', '&') );
+    setText( element->attribute(SS_MENU_ATTR_TEXT) );
 
     if (element->has(SS_MENU_ATTR_CHECKED))
     {
@@ -75,17 +76,20 @@ void SSButtonItem::init(SSXMLElement *element)
         setChecked( element->boolValueOf(SS_MENU_ATTR_CHECKED) );
     }
 
+    if (element->has(SS_XML_ATTR_ENABLED))
+        setEnabled(element->boolValueOf(SS_XML_ATTR_ENABLED));
+
     if (element->has(SS_MENU_ATTR_ICON))
     {
         QString resIcon = element->attribute(SS_MENU_ATTR_ICON);
         QIcon   buttonIcon;
 
         if (resIcon.startsWith('#'))
-            buttonIcon = ss:asset_icon(resIcon);
+            buttonIcon = QIcon(QString(":/ico/%1").arg(resIcon));
         else
-            buttonIcon = QIcon( resIcon);
+            buttonIcon = QIcon( resIcon );
 
-        setIcon( menuIcon );
+        setIcon( buttonIcon );
     }
 
     if (element->has(SS_MENU_ATTR_KEYS))

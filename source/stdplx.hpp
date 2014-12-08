@@ -183,7 +183,9 @@
  *   operations. Texts are shown in the button's tooltip window. This depends
  *   on the style set in the \c QToolBar object or \c QMainWindow object. See
  *   the documentation of those objects to understand how this works. This
- *   value will be used in the \c QAction::toolTip() member function.
+ *   value will be used in the \c QAction::toolTip() member function. Notice
+ *   that this text doesn't accept the "ALT" modifier like in the \c
+ *   SSMenuItem structure.
  * - \b keys: Keyboard shortcut to this button. This works in the same way as
  *   in the \c SSMenuItem object. Set keyboard shortcuts for buttons that
  *   don't have menu counter parts.
@@ -198,6 +200,10 @@
  *   attribute is enough to set the button as \e checkable. The attribute
  *   value, \b true or \b false, define if it will be first shown checked or
  *   not.
+ * - \b enabled: Sets the button \e enabled or \e disabled. When this
+ *   attribute is not set the button is enabled. The attribute's value can be
+ *   \b true or \b false. Anything different and the attribute is treated as
+ *   of it was \b false.
  * .
  * \c SSButtonItem can also show menus. So the "button" element accepts
  * "popup" elements as it's child. Only one "popup" element is accepted. The
@@ -227,6 +233,7 @@
 
 #define SS_XML_NODE_TOOLBAR         "toolbar"
 #define SS_XML_NODE_BUTTON          "button"
+#define SS_XML_ATTR_ENABLED         "enabled"
 ///@} internal
 
 #endif /* __STDPLX_HPP_DEFINED__ */

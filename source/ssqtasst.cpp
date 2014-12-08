@@ -55,11 +55,17 @@ QString asset_string(uint resID, size_t size)
 #endif
 }
 /*}}}*/
+// QByteArray asset_file(const QString &resPath);/*{{{*/
+QByteArray asset_file(const QString &resPath)
+{
+    QFile resFile( resPath );
+    return resFile.readAll();
+}
+/*}}}*/
 // QByteArray asset_file(uint resID, const char* type);/*{{{*/
 QByteArray asset_file(uint resID, const char* type)
 {
-    QFile resFile(sc__path.arg(type).arg(resID));
-    return resFile.readAll();
+    return asset_file( sc__path.arg(type).arg(resID) );
 }
 /*}}}*/
 // QIcon asset_icon(uint resID);/*{{{*/
