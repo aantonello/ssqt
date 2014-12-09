@@ -1,6 +1,3 @@
 Build: 0	Version: 1.2	Branch: v1.2
 
-	* ChangeLog: Switched to branch "v1.2".
-	* onload.vim: Version information updated.
-	* source/ssqt.pro: Version information updated.
-	* README.md: Added changelog documentation.
+	* ssqtfld.{hpp,cpp}: SSField class added.

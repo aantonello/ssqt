@@ -27,6 +27,16 @@ ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
    ssqtasst.hpp
    ssqtasst.cpp
   }
+  data access=. {
+   SSField=. {
+    ssqtfld.hpp
+    ssqtfld.cpp
+   }
+   SSRecordT=. {
+   }
+   SSRecordset=. {
+   }
+  }
   ui=. {
    Menus=. {
     SSMenuItem=. {
