@@ -14,3 +14,7 @@ Windows. It is built on top of Qt so to keep it cross platform. But it will
 uses some Windows specific operations when required and when targeting that
 platform.
 
+## Changes in version 1.2
+
+Added support to data access.
+

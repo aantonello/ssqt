@@ -1,5 +1,6 @@
-Build: 23	Version: 1.1	Branch: Master
+Build: 0	Version: 1.2	Branch: v1.2
 
-	* ssqtasst.{hpp,cpp} (asset_file(const QString&)): New function
-	  added.
-	* ssqttlbr.{hpp,cpp}: SSToolbar class added.
+	* ChangeLog: Switched to branch "v1.2".
+	* onload.vim: Version information updated.
+	* source/ssqt.pro: Version information updated.
+	* README.md: Added changelog documentation.

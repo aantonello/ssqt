@@ -7,7 +7,7 @@ QT        += widgets
 TEMPLATE   = lib
 CONFIG    += staticlib
 TARGET     = ssqt
-VERSION    = 1.1
+VERSION    = 1.2
 DESTDIR    = build
 
 # If others include directories are needed:
