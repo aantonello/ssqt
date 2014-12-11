@@ -100,4 +100,168 @@ typedef int      error_t;       /**< Type for error numbers.                */
 /*}}}*/
 ///@} 
 
+/**
+ * \ingroup ssqt_dao
+ * \defgroup ssqt_dao_constants Constants
+ * Used for data access objects.
+ * @{ *//* ---------------------------------------------------------------- */
+// #define SS_DATA_TYPE_INT        0x00000001/*{{{*/
+/**
+ * Integer types.
+ * Columns holding numbers with no floating point and no longer than 64 bits.
+ * There is no difference between unsigned integers and signed integers in
+ * this library. All columns holding fixed length numbers are translated to \c
+ * QVariant::LongLong (e.g.: \b int64_t).
+ * @since 1.2
+ **/
+#define SS_DATA_TYPE_INT        0x00000001
+/*}}}*/
+// #define SS_DATA_TYPE_FLOAT      0x00000002/*{{{*/
+/**
+ * Floating point numbers.
+ * Columns of types \e float, \e double or \e real. Floating pointing numbers
+ * with no more than 64 bits and no fixed precision. All those types are
+ * translated to \c QVariant::Double (e.g.: \b double) data type.
+ * @since 1.2
+ **/
+#define SS_DATA_TYPE_FLOAT      0x00000002
+/*}}}*/
+// #define SS_DATA_TYPE_FIXED      0x00000003/*{{{*/
+/**
+ * Fixed precision column types.
+ * Columns holding floating point numbers with a fixed precision. The
+ * implementation can vary but usually this type is set as \c DECIMAL or \c
+ * NUMERIC in database servers. Usually they are used to hold monetary
+ * information, having a fixed floating point precision and not limited in 64
+ * bits boundary. Unfortunately, Qt doesn't support this kind of column yet,
+ * and it will silently translate it to a \b double data type, constrained
+ * into 64 bits and allowing only 16 digits tops. Solutions can be handle the
+ * value as a stream (\c QByteArray) converting it to a <b>long double</b>
+ * (not directly supported by Qt).
+ * @since 1.2
+ **/
+#define SS_DATA_TYPE_FIXED      0x00000003
+/*}}}*/
+// #define SS_DATA_TYPE_DATE       0x00000004/*{{{*/
+/**
+ * Columns holding date information.
+ * Not all databases supports this type. MySQL and MariaDB are good examples
+ * of it. Usually they hold this information as a string in the format
+ * year-month-day. To correctly insert dates into those databases this format
+ * is mandatory. Qt can handle the conversion of these dates, both in strings
+ * or \c QDate or \c QDateTime objects. It will use the string format
+ * mentioned above (YYYY-MM-DD, ISO 8601) to parse the date and convert to one
+ * of the objects.
+ * @since 1.2
+ **/
+#define SS_DATA_TYPE_DATE       0x00000004
+/*}}}*/
+// #define SS_DATA_TYPE_TIME       0x00000005/*{{{*/
+/**
+ * Columns holding time information.
+ * As of the \c SS_DATA_TYPE_DATE type this type is not supported on all
+ * drivers. MySQL and MariaDB hold this information as strings with the format
+ * hh:mm. Qt will handle this type as string. It will not parse the value as
+ * a \c QDateTime object since the format is not an ISO 8601 standard. This
+ * library has an workaround for it.
+ * @see SSField::asTime()
+ * @since 1.2
+ **/
+#define SS_DATA_TYPE_TIME       0x00000005
+/*}}}*/
+// #define SS_DATA_TYPE_DATETIME   0x00000006/*{{{*/
+/**
+ * Columns holding date and time information.
+ * Database drivers hold this information in different ways. Microsoft SQL
+ * uses double precision coluns to hold this kind of data while MySQL uses
+ * fixed precisiona numeric columns. SQLite doesn't support this column type.
+ * Depending upon the format used to write the data in the database Qt can
+ * handle it directly. We also have a workaround.
+ * @see SSField::asDateTime().
+ * @since 1.2
+ **/
+#define SS_DATA_TYPE_DATETIME   0x00000006
+/*}}}*/
+// #define SS_DATA_TYPE_STAMP      0x00000007/*{{{*/
+/**
+ * Columns holding a timestamp.
+ * Almost all database drivers support this type directly or not. On Microsoft
+ * SQL or MySQL columns of this type are 64 bits integer columns. SQLite does
+ * not support this type directly but it can be mimic using integer columns
+ * because, in SQLite, an integer column has always 64 bits. Qt will not
+ * convert this type as \c QDateTime object automatically. We have
+ * a workaround.
+ * @see SSField::asTimestamp()
+ * @since 1.2
+ **/
+#define SS_DATA_TYPE_STAMP      0x00000007
+/*}}}*/
+// #define SS_DATA_TYPE_CHAR       0x00000008/*{{{*/
+/**
+ * Columns having a fixed length character array.
+ * This is the most basic character array column type supported by most
+ * database drivers. This is equivalent to \c CHAR or \c WCHAR column types.
+ * Columns of this type are always converted to \c QVariant::String in this
+ * library.
+ * @since 1.2
+ **/
+#define SS_DATA_TYPE_CHAR       0x00000008
+/*}}}*/
+// #define SS_DATA_TYPE_TEXT       0x00000009/*{{{*/
+/**
+ * Columns holding variable length of character data.
+ * This is usually the majority of data in a database. Any \c VARCHAR or \c
+ * VARWCHAR column type is identified as this. Qt will automatically convert
+ * it to \c QVariant::String (\c QMetaType::QString).
+ * @since 1.2
+ **/
+#define SS_DATA_TYPE_TEXT       0x00000009
+/*}}}*/
+// #define SS_DATA_TYPE_BLOB       0x0000000A/*{{{*/
+/**
+ * Columns having arbitrary binary data.
+ * Columns of this type doesn't have a fixed length. Qt can translate any
+ * column to binary data.
+ * @see SSField::asByteArray()
+ * @since 1.2
+ **/
+#define SS_DATA_TYPE_BLOB       0x0000000A
+/*}}}*/
+
+#define SS_COLUMN_REQUIRED      0x00000100
+#define SS_COLUMN_READONLY      0x00000200
+#define SS_COLUMN_AUTO          0x00000400
+#define SS_COLUMN_INDEXED       0x00000800
+#define SS_COLUMN_PKEY          0x00001000
+
+// #define SS_DB_DATE_FORMAT       "yyyy-MM-dd"/*{{{*/
+/**
+ * Standard date format for dates stored in database.
+ * Used to format the information to store in the database. Also used to read
+ * the information from the database using SSField#asDate() operation.
+ * @since 1.2
+ **/
+#define SS_DB_DATE_FORMAT       "yyyy-MM-dd"
+/*}}}*/
+// #define SS_DB_TIME_FORMAT       "HH:mm"/*{{{*/
+/**
+ * Standard time format string.
+ * Used to store time information in databases. Also used to retrieve the
+ * information when used with SSField#asTime() operation.
+ * @since 1.2
+ **/
+#define SS_DB_TIME_FORMAT       "HH:mm"
+/*}}}*/
+// #define SS_DB_DATETIME_FORMAT   "yyyy-MM-dd HH:mm:ss"/*{{{*/
+/**
+ * Standard date and time format string.
+ * Used to store date and time information in databases that support this kind
+ * of type. Also used to retrieve this information when used with
+ * SSField#asDateTime() operation.
+ * @since 1.2
+ **/
+#define SS_DB_DATETIME_FORMAT   "yyyy-MM-dd HH:mm:ss"
+/*}}}*/
+///@} ssqt_dao_constants
+
 #endif /* __SSQTCMN_HPP_DEFINED__ */

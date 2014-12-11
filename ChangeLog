@@ -1,3 +1,8 @@
-Build: 0	Version: 1.2	Branch: v1.2
+Build: 2	Version: 1.2	Branch: v1.2
 
-	* ssqtfld.{hpp,cpp}: SSField class added.
+	* libssqt.h: Changed to itemize the included headers.
+	* ssqt.pro: Updated with new added files.
+	* stdplx.hpp: Added include file QtSql.
+	* ssqtshrd.hpp: SSSharedT template class added.
+	* sql/column.{hpp,cpp}: Class column_t added.
+	* ssqtcmn.hpp: New constants added.

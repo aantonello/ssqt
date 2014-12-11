@@ -16,15 +16,34 @@
 #ifndef __LIBSSQT_H_DEFINED__
 #define __LIBSSQT_H_DEFINED__
 
+/* Base include files. */
 #include "ssqtcmn.hpp"
 #include "ssqterr.hpp"
 #include "ssqtdbg.hpp"
+
+/* Utilities */
+#include "ssqtshrd.hpp"
+
+/* XML support */
 #include "ssqtxmle.hpp"
 #include "ssqtxmld.hpp"
+
+/* Resources support */
+#include "ssqtasst.hpp"
+
+/* Data Access Objects */
+#include "ssqtfld.hpp"
+
+/* Menu support */
 #include "ssqtmnui.hpp"
 #include "ssqtmnup.hpp"
 #include "ssqtmenu.hpp"
-#include "ssqtasst.hpp"
+
+/* Toolbar support */
+#include "ssqttlbi.hpp"
+#include "ssqttlbr.hpp"
+
+/* User Interface */
 #include "ssqtmain.hpp"
 #include "ssqtapp.hpp"
 

@@ -16,9 +16,12 @@
 #ifndef __SSQTFLD_HPP_DEFINED__
 #define __SSQTFLD_HPP_DEFINED__
 
-#include <QSql>
+namespace ss {
+    class column_t;
+};
 
 /**
+ * \ingroup ssqt_dao
  * Represents a column in the database or table.
  * A \c SSField object kept its data using a pointer to a \c QSqlField object
  * retrieved from the connection with the database. Because of this pointer
@@ -56,13 +59,20 @@ public:
      **/
     SSField(const SSField &field);
     /*}}}*/
-    // SSField(QSqlField *field);/*{{{*/
+    // SSField(const QSqlField &field);/*{{{*/
     /**
      * Assignment constructor.
      * @param field The original \c QSqlField object.
      * @since 1.2
      **/
-    SSField(QSqlField *field);
+    SSField(const QSqlField &field);
+    /*}}}*/
+    // virtual ~SSField();/*{{{*/
+    /**
+     * Default destructor.
+     * @since 1.2
+     **/
+    virtual ~SSField();
     /*}}}*/
     //@}
 
@@ -175,17 +185,15 @@ public:
      **/
     size_t  precision() const;
     /*}}}*/
-    // QVariant::Type type() const;/*{{{*/
+    // uint    type() const;/*{{{*/
     /**
      * This field's value type.
-     * @return An enumeration value defining this field's value type.
-     * @remarks Although the enumeration is realy big, the value type is
-     * constrained by the database driver in a small subset. When the result
-     * of this operation is \c QVariant::Invalid the function #valid() returns
-     * \b false.
+     * @return A type constant declared in the @ref ssqt_dao_constants module.
+     * @remarks When the member function #valid() returns \b false the result
+     * of this operation is zero.
      * @since 1.2
      **/
-    QVariant::Type type() const;
+    uint type() const;
     /*}}}*/
     //@}
 
@@ -246,9 +254,11 @@ public:
     /*}}}*/
     // int64_t    asLong() const;/*{{{*/
     /**
-     * Retrieves this field's value as an 64 bits integer.
+     * Retrieves this field's value as a 64 bits integer.
      * @returns The \c int64_t value of this field.
      * @remarks When the field type is not numeric the result is zero.
+     * @note "Long" here have the same meaning as in Java where \b long is
+     * a 64 bits integer.
      * @since 1.2
      **/
     int64_t    asLong() const;
@@ -261,6 +271,58 @@ public:
      * @since 1.2
      **/
     int        asInt() const;
+    /*}}}*/
+    // QDateTime  asDateTime(const char *format = SS_DB_DATETIME_FORMAT) const;/*{{{*/
+    /**
+     * Get the value of this field as a \c QDateTime object.
+     * @param format The format of the value stored in the database. Usually
+     * this is equals to \c SS_DB_DATETIME_FORMAT value. Can be \b NULL. In
+     * this case the operation will not try to parse the value.
+     * @returns When succeeded the result is a \c QDateTime object with the
+     * date and time retrieved from this field's value. Otherwise a default
+     * constructed \c QDateTime object will be returned.
+     * @since 1.2
+     **/
+    QDateTime  asDateTime(const char *format = SS_DB_DATETIME_FORMAT) const;
+    /*}}}*/
+    // QDate      asDate(const char *format = SS_DB_DATE_FORMAT) const;/*{{{*/
+    /**
+     * Retrieves date information from this field's value.
+     * @param format The format of the value stored in the database. Usually
+     * this is equals to \c SS_DB_DATE_FORMAT value. Can be \b NULL. In
+     * this case the operation will not try to parse the value.
+     * @returns When succeeded the result is a \c QDate object with the
+     * date and time retrieved from this field's value. Otherwise a default
+     * constructed \c QDate object will be returned.
+     * @since 1.2
+     **/
+    QDate      asDate(const char *format = SS_DB_DATE_FORMAT) const;
+    /*}}}*/
+    // QTime      asTime(const char *format = SS_DB_TIME_FORMAT) const;/*{{{*/
+    /**
+     * Retrieves time information from this field's value.
+     * @param format The format of the value stored in the database. Usually
+     * this is equals to \c SS_DB_TIME_FORMAT value. Can be \b NULL. In
+     * this case the operation will not try to parse the value.
+     * @returns When succeeded the result is a \c QTime object with the
+     * date and time retrieved from this field's value. Otherwise a default
+     * constructed \c QTime object will be returned.
+     * @since 1.2
+     **/
+    QTime      asTime(const char *format = SS_DB_TIME_FORMAT) const;
+    /*}}}*/
+    // QDateTime  asTimestamp() const;/*{{{*/
+    /**
+     * Retrieves date and time information from this field's value.
+     * The information must be stored in a column of type \c
+     * SS_DATA_TYPE_STAMP or \c SS_DATA_TYPE_INT.
+     * @return A \c QDateTime object resulting of this field's value
+     * conversion.
+     * @note No time zone or offset is applied to the original value. It will
+     * be converted as is.
+     * @since 1.2
+     **/
+    QDateTime  asTimestamp() const;
     /*}}}*/
     //@}
 
@@ -333,99 +395,12 @@ public:
     /*}}}*/
     //@}
 
-protected:
-    QSqlField *m_field;                 /**< The original data pointer.     */
+private:
+    ss::column_t *m_column;             /**< Original data column.          */
 };
 /* Inline Functions {{{ */
 /* ---------------------------------------------------------------------------
- * Constructors & Destructor {{{
- * ------------------------------------------------------------------------ */
-// inline SSField::SSField(const QString &fieldName = QString(), QVariant::Type type = QVariant::Invalid);/*{{{*/
-inline SSField::SSField(const QString &fieldName, QVariant::Type type) :
-    m_field(new QSqlField(fieldName, type)) { }
-/*}}}*/
-// inline SSField::SSField(const SSField &field);/*{{{*/
-inline SSField::SSField(const SSField &field) : m_field(field.m_field) { }
-/*}}}*/
-// inline SSField::SSField(QSqlField *field);/*{{{*/
-inline SSField::SSField(QSqlField *field) : m_field(field) { }
-/*}}}*/
-// Constructors & Destructor }}}
-/* ---------------------------------------------------------------------------
- * Attributes {{{
- * ------------------------------------------------------------------------ */
-// inline bool SSField::valid() const;/*{{{*/
-inline bool SSField::valid() const {
-    return ((m_field != NULL) && m_field->isValid());
-}
-/*}}}*/
-// inline bool SSField::autoValue() const;/*{{{*/
-inline bool SSField::autoValue() const {
-    return (valid() ? m_field->isAutoValue() : false);
-}
-/*}}}*/
-// inline bool SSField::readOnly() const;/*{{{*/
-inline bool SSField::readOnly() const {
-    return (valid() ? m_field->isReadOnly() : true);
-}
-/*}}}*/
-// inline bool SSField::required() const;/*{{{*/
-inline bool SSField::required() const {
-    return (valid() ? m_field->requiredStatus() == QSqlField::Required : false);
-}
-/*}}}*/
-// inline bool SSField::isNull() const;/*{{{*/
-inline bool SSField::isNull() const {
-    return (valid() ? m_field->isNull() : true);
-}
-/*}}}*/
-// inline bool SSField::empty() const;/*{{{*/
-inline bool SSField::empty() const {
-    if (isNull()) return true;
-    return (((type() != QVariant::String) && (type() != QVariant::Char)) ?
-            false : asString().isEmpty());
-}
-/*}}}*/
-// inline QString SSField::name() const;/*{{{*/
-inline QString SSField::name() const {
-    return (valid() ? m_field->name() : QString());
-}
-/*}}}*/
-// inline size_t  SSField::length() const;/*{{{*/
-inline size_t  SSField::length() const {
-    int size = (valid() ? m_field->length() : 0);
-    return (size_t)((size < 0) ? 0 : size);
-}
-/*}}}*/
-// inline size_t  SSField::precision() const;/*{{{*/
-inline size_t  SSField::precision() const {
-    int size = (valid() ? m_field->precision() : 0);
-    return (size_t)((size < 0) ? 0 : size);
-}
-/*}}}*/
-// inline QVariant::Type SSField::type() const;/*{{{*/
-inline QVariant::Type SSField::type() const {
-    return (valid() ? m_field->type() : QVariant::Invalid);
-}
-/*}}}*/
-// Attributes }}}
-/* ---------------------------------------------------------------------------
- * Properties {{{
- * ------------------------------------------------------------------------ */
-// inline QVariant SSField::value() const;/*{{{*/
-inline QVariant SSField::value() const {
-    return (valid() ? m_field->value() : QVariant());
-}
-/*}}}*/
-// inline void SSField::value(const QVariant &val);/*{{{*/
-inline void SSField::value(const QVariant &val) {
-    if (!valid()) return;
-    m_field->setValue( val );
-}
-/*}}}*/
-// Properties }}}
-/* ---------------------------------------------------------------------------
- * Value Conversion {{{
+ * Public: Value Conversion {{{
  * ------------------------------------------------------------------------ */
 // inline QByteArray SSField::asByteArray() const;/*{{{*/
 inline QByteArray SSField::asByteArray() const {
@@ -452,18 +427,33 @@ inline int        SSField::asInt() const {
     return value().toInt();
 }
 /*}}}*/
-// Value Conversion }}}
+// inline QDateTime  SSField::asDateTime(const char *format = SS_DB_DATETIME_FORMAT) const;/*{{{*/
+inline QDateTime  SSField::asDateTime(const char *format) const {
+    return ((format) ? QDateTime::fromString(asString(), format) : value().toDateTime());
+}
+/*}}}*/
+// inline QDate      SSField::asDate(const char *format = SS_DB_DATE_FORMAT) const;/*{{{*/
+inline QDate      SSField::asDate(const char *format) const {
+    return ((!format) ? value().toDate() : QDate::fromString(asString(), format));
+}
+/*}}}*/
+// inline QTime      SSField::asTime(const char *format = SS_DB_TIME_FORMAT) const;/*{{{*/
+inline QTime      SSField::asTime(const char *format) const {
+    return ((!format) ? value().toTime() : QTime::fromString(asString(), format));
+}
+/*}}}*/
+// inline QDateTime  SSField::asTimestamp() const;/*{{{*/
+inline QDateTime  SSField::asTimestamp() const {
+    return QDateTime::fromMSecsSinceEpoch((qint64)asLong());
+}
+/*}}}*/
+// Public: Value Conversion }}}
 /* ---------------------------------------------------------------------------
  * Overloaded Operators {{{
  * ------------------------------------------------------------------------ */
 // inline SSField::operator bool() const;/*{{{*/
 inline SSField::operator bool() const {
     return isNull();
-}
-/*}}}*/
-// inline SSField& SSField::operator =(const SSField &field);/*{{{*/
-inline SSField& SSField::operator =(const SSField &field) {
-    m_field = field.m_field; return *this;
 }
 /*}}}*/
 // inline SSField& SSField::operator =(const QString &val);/*{{{*/

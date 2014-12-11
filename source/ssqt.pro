@@ -3,7 +3,7 @@
 # ============================================================================
 
 # QtCore and QtGui are defaults
-QT        += widgets
+QT        += widgets sql
 TEMPLATE   = lib
 CONFIG    += staticlib
 TARGET     = ssqt
@@ -29,34 +29,49 @@ CONFIG(debug, debug|release) {
 headers.path = $$(WORKHOME)/libs/libssqt-$$VERSION
 
 # HEADERS: .h or .hpp files for dependency check {{{
-HEADERS += libssqt.h \
+BASE_HEADERS = libssqt.h \
     stdplx.hpp \
     ssqtcmn.hpp \
     ssqterr.hpp \
     ssqtdbg.hpp \
     ssqtasst.hpp \
+    ssqtshrd.hpp \
     ssqtxmle.hpp \
-    ssqtxmld.hpp \
-    ssqtmnui.hpp \
+    ssqtxmld.hpp
+
+SQL_SUPPORT = sql/column.hpp
+
+DAO_HEADERS = ssqtfld.hpp
+
+GUI_HEADERS = ssqtmnui.hpp \
     ssqtmnup.hpp \
     ssqtmenu.hpp \
     ssqttlbi.hpp \
     ssqttlbr.hpp \
     ssqtmain.hpp \
     ssqtapp.hpp
+
+HEADERS += $$BASE_HEADER $$SQL_SUPPORT $$DAO_HEADERS $$GUI_HEADERS
 # HEADERS }}}
 # SOURCES: .c or .cpp files to be compiled {{{
-SOURCES += ssqtdbg.cpp \
+BASE_SOURCES = ssqtdbg.cpp \
     ssqtasst.cpp \
     ssqtxmle.cpp \
-    ssqtxmld.cpp \
-    ssqtmnui.cpp \
+    ssqtxmld.cpp
+
+SQL_SUPPORT = sql/column.cpp
+
+DAO_SOURCES = ssqtfld.cpp
+
+GUI_SOURCES = ssqtmnui.cpp \
     ssqtmnup.cpp \
     ssqtmenu.cpp \
     ssqttlbi.cpp \
     ssqttlbr.cpp \
     ssqtmain.cpp \
     ssqtapp.cpp
+
+SOURCES += $$BASE_SOURCES $$SQL_SUPPORT $$DAO_SOURCES $$GUI_SOURCES
 # SOURCES }}}
 
 headers.files = $$HEADERS

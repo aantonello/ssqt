@@ -13,6 +13,11 @@ ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
    ssqtdbg.hpp
    ssqtdbg.cpp
   }
+  utils=. {
+   SSSharedT=. {
+    ssqtshrd.hpp
+   }
+  }
   xml support=. {
    SSXMLElement=. {
     ssqtxmle.hpp
@@ -28,11 +33,16 @@ ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
    ssqtasst.cpp
   }
   data access=. {
+   internal=sql {
+    column.hpp
+    column.cpp
+   }
    SSField=. {
     ssqtfld.hpp
     ssqtfld.cpp
    }
    SSRecordT=. {
+    ssqtrec.hpp
    }
    SSRecordset=. {
    }

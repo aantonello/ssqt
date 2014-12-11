@@ -20,6 +20,7 @@
 #include <QtCore>
 #include <QtGui>
 #include <QtWidgets>
+#include <QtSql>
 
 /**
  * \defgroup ssqt Super Simple library for Qt 5
@@ -37,6 +38,19 @@
  * \defgroup ssqt_funs Global Functions
  * The group contains all global declared functions provided by this library.
  * Notice that global functions are kept into the \c ss namespace.
+ **/
+
+/**
+ * \ingroup ssqt
+ * \defgroup ssqt_utils Utilities
+ * Macros, functions, classes and templates for general purpose.
+ * @since 1.2
+ **/
+
+/**
+ * \ingroup ssqt
+ * \defgroup ssqt_dao Data Access Objects
+ * Classes and templates for data access and manipulation.
  **/
 
 /**
