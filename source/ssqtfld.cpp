@@ -24,6 +24,11 @@
  * ======================================================================== */
 
 /* ---------------------------------------------------------------------------
+ * Static Data Members
+ * ------------------------------------------------------------------------ */
+SSField SSField::invalidField();    /**< Static member inicialization.      */
+
+/* ---------------------------------------------------------------------------
  * Constructors & Destructor
  * ------------------------------------------------------------------------ */
 
@@ -39,8 +44,9 @@ SSField::SSField(const SSField &field) :
 {
 }
 /*}}}*/
-// SSField::SSField(const QSqlField &field);/*{{{*/
-SSField::SSField(const QSqlField &field) : m_column(new ss::column_t(field))
+// SSField::SSField(const QSqlField &field, const QSqlIndex &index = QSqlIndex());/*{{{*/
+SSField::SSField(const QSqlField &field, const QSqlIndex &index) :
+    m_column(new ss::column_t(field, index))
 {
 }
 /*}}}*/

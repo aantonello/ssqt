@@ -41,7 +41,8 @@ BASE_HEADERS = libssqt.h \
 
 SQL_SUPPORT = sql/column.hpp
 
-DAO_HEADERS = ssqtfld.hpp
+DAO_HEADERS = ssqtfld.hpp \
+    ssqtrec.hpp
 
 GUI_HEADERS = ssqtmnui.hpp \
     ssqtmnup.hpp \

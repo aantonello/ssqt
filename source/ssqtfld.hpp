@@ -32,6 +32,10 @@ namespace ss {
 class SSField
 {
 public:
+    /** @name Static Data Members */ //@{
+    static SSField invalidField;            /**< An invalid field instance. */
+    //@}
+public:
     /** @name Constructors & Destructor */ //@{
     // explicit SSField(const QString &fieldName = QString(), QVariant::Type type = QVariant::Invalid);/*{{{*/
     /**
@@ -59,13 +63,15 @@ public:
      **/
     SSField(const SSField &field);
     /*}}}*/
-    // SSField(const QSqlField &field);/*{{{*/
+    // SSField(const QSqlField &field, const QSqlIndex &index = QSqlIndex());/*{{{*/
     /**
      * Assignment constructor.
      * @param field The original \c QSqlField object.
+     * @param index Index of the original table. Used to recognized this field
+     * as index or not.
      * @since 1.2
      **/
-    SSField(const QSqlField &field);
+    SSField(const QSqlField &field, const QSqlIndex &index = QSqlIndex());
     /*}}}*/
     // virtual ~SSField();/*{{{*/
     /**
@@ -75,7 +81,6 @@ public:
     virtual ~SSField();
     /*}}}*/
     //@}
-
 public:
     /** @name Attributes */ //@{
     // bool valid() const;/*{{{*/
@@ -196,7 +201,6 @@ public:
     uint type() const;
     /*}}}*/
     //@}
-
 public:
     /** @name Properties */ //@{
     // QVariant value() const;/*{{{*/
@@ -218,7 +222,6 @@ public:
     void value(const QVariant &val);
     /*}}}*/
     //@}
-
 public:
     /** @name Value Conversion */ //@{
     // QByteArray asByteArray() const;/*{{{*/
@@ -325,7 +328,6 @@ public:
     QDateTime  asTimestamp() const;
     /*}}}*/
     //@}
-
 public:
     /** @name Overloaded Operators */ //@{
     // operator bool() const;/*{{{*/
@@ -394,7 +396,6 @@ public:
     SSField& operator =(int val);
     /*}}}*/
     //@}
-
 private:
     ss::column_t *m_column;             /**< Original data column.          */
 };

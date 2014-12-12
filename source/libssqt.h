@@ -33,6 +33,7 @@
 
 /* Data Access Objects */
 #include "ssqtfld.hpp"
+#include "ssqtrec.hpp"
 
 /* Menu support */
 #include "ssqtmnui.hpp"
