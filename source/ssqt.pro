@@ -36,6 +36,7 @@ BASE_HEADERS = libssqt.h \
     ssqtdbg.hpp \
     ssqtasst.hpp \
     ssqtshrd.hpp \
+    ssqtaush.hpp \
     ssqtxmle.hpp \
     ssqtxmld.hpp
 
@@ -62,7 +63,8 @@ BASE_SOURCES = ssqtdbg.cpp \
 
 SQL_SUPPORT = sql/column.cpp
 
-DAO_SOURCES = ssqtfld.cpp
+DAO_SOURCES = ssqtfld.cpp \
+    ssqtrec.cpp
 
 GUI_SOURCES = ssqtmnui.cpp \
     ssqtmnup.cpp \

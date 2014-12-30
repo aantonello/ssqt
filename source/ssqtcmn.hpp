@@ -262,6 +262,50 @@ typedef int      error_t;       /**< Type for error numbers.                */
  **/
 #define SS_DB_DATETIME_FORMAT   "yyyy-MM-dd HH:mm:ss"
 /*}}}*/
+
+// #define SS_RECORDSET_FORWARDONLY    0/*{{{*/
+/**
+ * Builds a forwardonly recordset.
+ * This is used in the \c SSRecordsetT constructors defining that the
+ * recordset can move ahead only. In some database drivers a forward only
+ * query has greater performance and saves much memory. This is the default
+ * style when creating a \c SSRecordsetT instance.
+ * @since 1.2
+ **/
+#define SS_RECORDSET_FORWARDONLY    0
+/*}}}*/
+// #define SS_RECORDSET_DYNAMIC        1/*{{{*/
+/**
+ * Builds a recordset that can be moved backwards.
+ * When this style is used to instantiate an \c SSRecordsetT object all
+ * retrieved records are stored enabling you to move back in the list when
+ * needed.
+ * @since 1.2
+ **/
+#define SS_RECORDSET_DYNAMIC        1
+/*}}}*/
+
+// #define SS_SEEK_SET             1/*{{{*/
+/**
+ * Start seeking from the beginning of data.
+ * @since 1.2
+ **/
+#define SS_SEEK_SET             1
+/*}}}*/
+// #define SS_SEEK_CUR             0/*{{{*/
+/**
+ * Starts seeking from the current position.
+ * @since 1.2
+ **/
+#define SS_SEEK_CUR             0
+/*}}}*/
+// #define SS_SEEK_END             -1/*{{{*/
+/**
+ * Starts seeking from the end of the data.
+ * @since 1.2
+ **/
+#define SS_SEEK_END             -1
+/*}}}*/
 ///@} ssqt_dao_constants
 
 #endif /* __SSQTCMN_HPP_DEFINED__ */

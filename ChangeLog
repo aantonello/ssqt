@@ -1,6 +1,14 @@
-Build: 2	Version: 1.2	Branch: v1.2
+Build: 3	Version: 1.2	Branch: v1.2
 
-	* ssqtrec.hpp: SSRecordT template class defined. Also SSRecord
-	  default template implementation.
-	* libssqt.h: Updated with new added headers.
-	* ssqt.pro: Updated with new added headers.
+	* ssqtcmn.hpp: Updated with new constants.
+	* ssqtrec.cpp: SSRecord class implementation added.
+	* sql/rst_t.{hpp,cpp}: ss::resultset_t class added.
+	* sql/rst_t.{hpp,cpp}: Removed. Class ss::resultset_t removed.
+	* sql/dataset.{hpp,cpp}: ss::dataset class added.
+	* ssqtrst.{hpp,cpp}: Class SSRecordset updated.
+	* ssqtaush.hpp: SSAutoSharedT template class added.
+	* sql/qtoker.{hpp,cpp}: Started a tokenization routine for SQL
+	  statements.
+	* sql/queryp.{hpp,cpp}: The query parser for SQL statements.
+	* sql/colref.{hpp,cpp}: Column reference parser for SQL
+	  statements.

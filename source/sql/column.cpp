@@ -81,14 +81,13 @@ void column_t::precision(int precis)
 /*}}}*/
 
 /* ---------------------------------------------------------------------------
- * Import & Export Operations
+ * Operations
  * ------------------------------------------------------------------------ */
 
 // void column_t::reset(const QSqlField &field, const QSqlIndex &index = QSqlIndex());/*{{{*/
 void column_t::reset(const QSqlField &field, const QSqlIndex &index)
 {
     this->name   = field.name();
-    this->value  = field.value();
     this->length = field.length();
     setType( field.type() );
 
@@ -110,22 +109,6 @@ void column_t::reset(const QSqlField &field, const QSqlIndex &index)
     }
 
     this->precision( field.precision() );
-}
-/*}}}*/
-// bool column_t::commit(QSqlRecord *record);/*{{{*/
-bool column_t::commit(QSqlRecord *record)
-{
-    if (!record) return false;
-
-    int index = record->indexOf(this->name);
-    if (index < 0) return false;
-
-    if (isNull())
-        record->setNull(index);
-    else
-        record->setValue(index, this->value);
-
-    return true;
 }
 /*}}}*/
 

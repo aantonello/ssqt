@@ -23,45 +23,36 @@ namespace ss {
 /**
  * \ingroup ssqt_dao
  * Represents a column in the database or table.
- * A \c SSField object kept its data using a pointer to a \c QSqlField object
- * retrieved from the connection with the database. Because of this pointer
- * reference every operation done in the objects of this library are made
- * through pointer so the manager object can own the original reference.
+ * A \c SSField object keeps its data apart of the original \c QSqlField
+ * object. As of this the \c SSField class is much simpler. A \c SSField
+ * object has only a reference to its column definition. All \c SSField for
+ * the same column share this reference, saving much memory.
  * @since 1.2
  *//* --------------------------------------------------------------------- */
 class SSField
 {
 public:
-    /** @name Static Data Members */ //@{
-    static SSField invalidField;            /**< An invalid field instance. */
-    //@}
-public:
     /** @name Constructors & Destructor */ //@{
-    // explicit SSField(const QString &fieldName = QString(), QVariant::Type type = QVariant::Invalid);/*{{{*/
-    /**
-     * Constructs a field object with the specified name and type.
-     * @param fieldName The field name.
-     * @param type Type for the field value. Values are kept in \c QVariant
-     * object.
-     * @remarks If this field has no name it can be searched only by its index
-     * in the recordset collection. If no type if specified the field becomes
-     * invalid.
-     * @since 1.2
-     **/
-    explicit SSField(const QString &fieldName = QString(), QVariant::Type type = QVariant::Invalid);
-    /*}}}*/
     // SSField(const SSField &field);/*{{{*/
     /**
      * Copy constructor.
      * @param field Another field to copy its properties and value.
-     * @remarks An \c SSField object keeps its data in a pointer to the
-     * original \c QSqlField object. Using this constructor (or the overloaded
-     * operator =), both objects will have a reference to the same origin.
-     * Changes in one instance will be reflected in another instance
-     * immediately. Care must be taken.
+     * @remarks An \c SSField object keeps its data localy and share it's
+     * column information with all others \c SSField objects pointing to the
+     * same column in a \c SSRecord object.
      * @since 1.2
      **/
     SSField(const SSField &field);
+    /*}}}*/
+    // SSField(ss::column_t *column, const QVariant &val);/*{{{*/
+    /**
+     * Constructs the field object with the specified column and value.
+     * @param column Pointer to the column information for this field. Cannot
+     * be \b NULL.
+     * @param val The value of this field.
+     * @since 1.2
+     **/
+    SSField(ss::column_t *column, const QVariant &val);
     /*}}}*/
     // SSField(const QSqlField &field, const QSqlIndex &index = QSqlIndex());/*{{{*/
     /**
@@ -87,9 +78,8 @@ public:
     /**
      * Checks the validity of this object.
      * @returns \b true when this object is valid. \b false otherwise.
-     * @remarks The object becomes invalid when its \c QSqlField origin object
-     * is reclamed or destroied. Also when the value type is invalid, this
-     * operation returns \b false.
+     * @remarks The object becomes invalid when its column reference doesn't
+     * exists.
      * @since 1.2
      **/
     bool valid() const;
@@ -101,25 +91,25 @@ public:
      * @returns \b true when the value is auto-generated. \b false otherwise.
      * @remarks The result of this operation is dependent of the database
      * driver and not always the returned information is accurate.
+     * @note A column with auto-generated value is usually the table's primary
+     * key.
      * @since 1.2
      **/
     bool autoValue() const;
     /*}}}*/
-    // bool readOnly() const;/*{{{*/
+    // bool isIndex() const;/*{{{*/
     /**
-     * Retrieves when the value of the column represented by this field is
-     * read-only.
-     * @returns \b true when the value cannot be changed. \b false otherwise.
-     * @remarks Read only fields are retrieved when a read only query is the
-     * source of the data. Running a database view or stored procedure for
-     * example.
+     * Retrieves wheter the column referenced by this field participates in
+     * the tables primary key index.
+     * @returns \b true when the column participates in the primary key index.
+     * Otherwise \b false.
      * @since 1.2
      **/
-    bool readOnly() const;
+    bool isIndex() const;
     /*}}}*/
     // bool required() const;/*{{{*/
     /**
-     * Checks whether the value of this field column is required.
+     * Checks whether a value for this field is required.
      * @return \b true when the user is obligated to set a value for this
      * field's column. Otherwise \b false.
      * @remarks The result of this operation is meaningful only in new records
@@ -145,14 +135,18 @@ public:
     /**
      * Checks whether the value of this field's column is empty.
      * @return \b true if the value is empty, otherwise \b false.
-     * @remarks This operation is meaningful when this field's column
-     * type is a string. It will check the nulidity of the value and if the
-     * string content is empty. The result will take the following path:
-     * -# When the value is null (see #isNull()) the operation returns \b
-     *    true.
-     * -# When the value type is not a string the function returns \b false.
-     * -# When the string is zero length the operation returns \b true.
-     *    Otherwise \b false.
+     * @remarks This operation is meaningful only when the data type of the
+     * column is \c SS_DATA_TYPE_TEXT or \c SS_DATA_TYPE_BLOB, where the value
+     * can be non null but still have an empty string or no binary data. This
+     * function will take the following decisions:
+     * - When this field is null (SSField::isNull() returns \b true), this
+     *   operation returns \b true either.
+     * - When the column is not of the types \c SS_DATA_TYPE_TEXT nor \c
+     *   SS_DATA_TYPE_BLOB the operation returns \b false.
+     * - The method checks the length of the data in the SSField::value member
+     *   converting it to \c QString or \c QByteArray as needed, returning \b
+     *   true if the convertion generates an empty object or \b false when
+     *   not.
      * .
      * @since 1.2
      **/
@@ -160,21 +154,38 @@ public:
     /*}}}*/
     // QString name() const;/*{{{*/
     /**
-     * Name of this field in the query or table.
-     * @returns \c QString with this field name.
+     * Retrieves the column's name of this field.
+     * The column name can be defined in the database, by the source table
+     * structure. It can also be defined by the \c SELECT statement, using an
+     * \c ALIAS keyword.
+     * @returns \c QString with this field name. When this field is invalid
+     * (SSField::valid() returns \b false) the result will be an empty \c
+     * QString object.
      * @since 1.2
      **/
     QString name() const;
     /*}}}*/
+    // size_t  size() const;/*{{{*/
+    /**
+     * Retrieves the size of the column as defined in the database.
+     * Some columns type can have its length (or maximum length) defined on
+     * its structure. This is the value returned by this method.
+     * @returns The size of the data in this column. When this value cannot be
+     * determined or the column type does not have a defined length the result
+     * will be zero.
+     * @since 1.2
+     **/
+    size_t  size() const;
+    /*}}}*/
     // size_t  length() const;/*{{{*/
     /**
-     * Retrieves this field length.
-     * @return The length of the data held in this field.
-     * @remarks For some drivers this information is not available. In these
-     * cases the function will return zero. For some field types the value
-     * returned is a count of bytes. For others types the result is counted in
-     * characters. For string types the returned value never includes the null
-     * terminator.
+     * Retrieves this field's value length.
+     * @return The length of the data held in this field when the column is of
+     * type \c SS_DATA_TYPE_TEXT or \c SS_DATA_TYPE_BLOB. For other types the
+     * result is always zero.
+     * @remarks When the column type is \c SS_DATA_TYPE_TEXT the result is
+     * counted in characters. When the column type is \c SS_DATA_TYPE_BLOB the
+     * result is counted as bytes.
      * @since 1.2
      **/
     size_t  length() const;
@@ -182,8 +193,8 @@ public:
     // size_t  precision() const;/*{{{*/
     /**
      * Retrieves the precision of this field's value.
-     * @returns Un integer with this field's value precision.
-     * @remarks This information is useful only for numeric fields that has
+     * @returns An integer with this field's value precision.
+     * @remarks This information is useful only for numeric columns that has
      * floating point data. For others types, the result of this operation is
      * always zero.
      * @since 1.2
@@ -192,7 +203,7 @@ public:
     /*}}}*/
     // uint    type() const;/*{{{*/
     /**
-     * This field's value type.
+     * This field's column type.
      * @return A type constant declared in the @ref ssqt_dao_constants module.
      * @remarks When the member function #valid() returns \b false the result
      * of this operation is zero.
@@ -202,41 +213,21 @@ public:
     /*}}}*/
     //@}
 public:
-    /** @name Properties */ //@{
-    // QVariant value() const;/*{{{*/
-    /**
-     * Retrieves the value of this field.
-     * @return A \c QVariant object with this field's value.
-     * @since 1.2
-     **/
-    QVariant value() const;
-    /*}}}*/
-    // void value(const QVariant &val);/*{{{*/
-    /**
-     * Sets or changes the value of this field.
-     * @param val A \c QVariant object with the field's value. The operation
-     * tries to convert this \c QVariant into the specified type when data has
-     * to be written in the database.
-     * @since 1.2
-     **/
-    void value(const QVariant &val);
-    /*}}}*/
-    //@}
-public:
     /** @name Value Conversion */ //@{
-    // QByteArray asByteArray() const;/*{{{*/
+    // QByteArray toByteArray() const;/*{{{*/
     /**
      * Gets the value of this field as a byte array.
      * @return A \c QByteArray object with the value of this field in binary
      * format. If this field is \b NULL or empty the result will be an empty
      * \c QByteArray object.
+     * @remarks Can be used on columns of any type.
      * @since 1.2
      **/
-    QByteArray asByteArray() const;
+    QByteArray toByteArray() const;
     /*}}}*/
-    // QString    asString() const;/*{{{*/
+    // QString    toString() const;/*{{{*/
     /**
-     * Gets the value of this field as an string.
+     * Gets the value of this field as a string.
      * @return A \c QString object with the value of this field.
      * @remarks When the field value is numeric it will be converted to its
      * textual representation. That is, the number 10.1 will be converted to
@@ -244,18 +235,18 @@ public:
      * @note The conversion doesn't take locale into account.
      * @since 1.2
      **/
-    QString    asString() const;
+    QString    toString() const;
     /*}}}*/
-    // double     asFloat() const;/*{{{*/
+    // double     toFloat() const;/*{{{*/
     /**
      * Retrieves this field's value in a floating point number.
      * @return The value os the field as a \b double.
      * @remarks When the field type is not numeric the result is zero.
      * @since 1.2
      **/
-    double     asFloat() const;
+    double     toFloat() const;
     /*}}}*/
-    // int64_t    asLong() const;/*{{{*/
+    // int64_t    toLong() const;/*{{{*/
     /**
      * Retrieves this field's value as a 64 bits integer.
      * @returns The \c int64_t value of this field.
@@ -264,18 +255,18 @@ public:
      * a 64 bits integer.
      * @since 1.2
      **/
-    int64_t    asLong() const;
+    int64_t    toLong() const;
     /*}}}*/
-    // int        asInt() const;/*{{{*/
+    // int        toInt() const;/*{{{*/
     /**
      * Retrieves this field's value as an integer number.
      * @return The value of this field as an \b int.
      * @remarks When the field type is not numeric the result is zero.
      * @since 1.2
      **/
-    int        asInt() const;
+    int        toInt() const;
     /*}}}*/
-    // QDateTime  asDateTime(const char *format = SS_DB_DATETIME_FORMAT) const;/*{{{*/
+    // QDateTime  toDateTime(const char *format = SS_DB_DATETIME_FORMAT) const;/*{{{*/
     /**
      * Get the value of this field as a \c QDateTime object.
      * @param format The format of the value stored in the database. Usually
@@ -286,9 +277,9 @@ public:
      * constructed \c QDateTime object will be returned.
      * @since 1.2
      **/
-    QDateTime  asDateTime(const char *format = SS_DB_DATETIME_FORMAT) const;
+    QDateTime  toDateTime(const char *format = SS_DB_DATETIME_FORMAT) const;
     /*}}}*/
-    // QDate      asDate(const char *format = SS_DB_DATE_FORMAT) const;/*{{{*/
+    // QDate      toDate(const char *format = SS_DB_DATE_FORMAT) const;/*{{{*/
     /**
      * Retrieves date information from this field's value.
      * @param format The format of the value stored in the database. Usually
@@ -299,9 +290,9 @@ public:
      * constructed \c QDate object will be returned.
      * @since 1.2
      **/
-    QDate      asDate(const char *format = SS_DB_DATE_FORMAT) const;
+    QDate      toDate(const char *format = SS_DB_DATE_FORMAT) const;
     /*}}}*/
-    // QTime      asTime(const char *format = SS_DB_TIME_FORMAT) const;/*{{{*/
+    // QTime      toTime(const char *format = SS_DB_TIME_FORMAT) const;/*{{{*/
     /**
      * Retrieves time information from this field's value.
      * @param format The format of the value stored in the database. Usually
@@ -312,9 +303,9 @@ public:
      * constructed \c QTime object will be returned.
      * @since 1.2
      **/
-    QTime      asTime(const char *format = SS_DB_TIME_FORMAT) const;
+    QTime      toTime(const char *format = SS_DB_TIME_FORMAT) const;
     /*}}}*/
-    // QDateTime  asTimestamp() const;/*{{{*/
+    // QDateTime  toTimestamp() const;/*{{{*/
     /**
      * Retrieves date and time information from this field's value.
      * The information must be stored in a column of type \c
@@ -325,7 +316,7 @@ public:
      * be converted as is.
      * @since 1.2
      **/
-    QDateTime  asTimestamp() const;
+    QDateTime  toTimestamp() const;
     /*}}}*/
     //@}
 public:
@@ -349,103 +340,94 @@ public:
      **/
     operator bool() const;
     /*}}}*/
+    // bool operator ==(const SSField &field) const;/*{{{*/
+    /**
+     * Compares two \c SSField objects for equality.
+     * @param field \c SSField object to compare with this one.
+     * @returns \b true when the objects are equals. \b false otherwise.
+     * @remarks Two fields are equal when they point to the same column
+     * definition and has the same data.
+     * @since 1.2
+     **/
+    bool operator ==(const SSField &field) const;
+    /*}}}*/
     // SSField& operator =(const SSField &field);/*{{{*/
     /**
      * Copy operator.
      * @param field Another \c SSField instance to copy.
      * @returns \b this.
-     * @remarks Every \c SSField object hold its value in a pointer to the
-     * original \c QSqlField object. This means that each copy of a \c SSField
-     * object points to the same \c QSqlField object instance. Changes in one
-     * \c SSField will be reflected on each copy.
      * @since 1.2
      **/
     SSField& operator =(const SSField &field);
     /*}}}*/
-    // SSField& operator =(const QString &val);/*{{{*/
-    /**
-     * Sets or changes the value of this field.
-     * @param val A \c QString object to be used as value for this field. If
-     * this field is not of string type the operation will try to convert the
-     * value into this field's type. On failure nothing happens.
-     * @return The operation returns \b this.
-     * @since 1.2
-     **/
-    SSField& operator =(const QString &val);
-    /*}}}*/
-    // SSField& operator =(double val);/*{{{*/
-    /**
-     * Sets or changes the value of this field.
-     * @param val Value for the field. When this field is not of a numeric
-     * type but is a string type the conversion is authomatic. If the
-     * conversion fails the operation does nothing.
-     * @return The operation returns \b this.
-     * @since 1.2
-     **/
-    SSField& operator =(double val);
-    /*}}}*/
-    // SSField& operator =(int val);/*{{{*/
-    /**
-     * Sets or changes the value of this field.
-     * @param val Value for the field. When this field is not of a numeric
-     * type but is a string type the conversion is authomatic. If the
-     * conversion fails the operation does nothing.
-     * @return The operation returns \b this.
-     * @since 1.2
-     **/
-    SSField& operator =(int val);
-    /*}}}*/
     //@}
+public:
+    QVariant value;                     /**< Value is public available.     */
+
 private:
-    ss::column_t *m_column;             /**< Original data column.          */
+    ss::column_t *m_column;             /**< Column information.            */
 };
 /* Inline Functions {{{ */
 /* ---------------------------------------------------------------------------
+ * Public: Attributes {{{
+ * ------------------------------------------------------------------------ */
+// inline bool SSField::valid() const;/*{{{*/
+inline bool SSField::valid() const {
+    return (m_column != NULL);
+}
+/*}}}*/
+// inline bool SSField::isNull() const;/*{{{*/
+inline bool SSField::isNull() const {
+    return !value.isValid();
+}
+/*}}}*/
+// Public: Attributes }}}
+/* ---------------------------------------------------------------------------
  * Public: Value Conversion {{{
  * ------------------------------------------------------------------------ */
-// inline QByteArray SSField::asByteArray() const;/*{{{*/
-inline QByteArray SSField::asByteArray() const {
-    return value().toByteArray();
+// inline QByteArray SSField::toByteArray() const;/*{{{*/
+inline QByteArray SSField::toByteArray() const {
+    return value.toByteArray();
 }
 /*}}}*/
-// inline QString    SSField::asString() const;/*{{{*/
-inline QString    SSField::asString() const {
-    return value().toString();
+// inline QString    SSField::toString() const;/*{{{*/
+inline QString SSField::toString() const {
+    return value.toString();
 }
 /*}}}*/
-// inline double     SSField::asFloat() const;/*{{{*/
-inline double     SSField::asFloat() const {
-    return value().toDouble();
+// inline double     SSField::toFloat() const;/*{{{*/
+inline double SSField::toFloat() const {
+    return value.toDouble();
 }
 /*}}}*/
-// inline int64_t    SSField::asLong() const;/*{{{*/
-inline int64_t    SSField::asLong() const {
-    return value().toLongLong();
+// inline int64_t    SSField::toLong() const;/*{{{*/
+inline int64_t SSField::toLong() const {
+    return value.toLongLong();
 }
 /*}}}*/
-// inline int        SSField::asInt() const;/*{{{*/
-inline int        SSField::asInt() const {
-    return value().toInt();
+// inline int        SSField::toInt() const;/*{{{*/
+inline int SSField::toInt() const {
+    return value.toInt();
 }
 /*}}}*/
-// inline QDateTime  SSField::asDateTime(const char *format = SS_DB_DATETIME_FORMAT) const;/*{{{*/
-inline QDateTime  SSField::asDateTime(const char *format) const {
-    return ((format) ? QDateTime::fromString(asString(), format) : value().toDateTime());
+// inline QDateTime  SSField::toDateTime(const char *format = SS_DB_DATETIME_FORMAT) const;/*{{{*/
+inline QDateTime SSField::toDateTime(const char *format) const {
+    return ((format) ? QDateTime::fromString(toString(), format) : value.toDateTime());
 }
 /*}}}*/
-// inline QDate      SSField::asDate(const char *format = SS_DB_DATE_FORMAT) const;/*{{{*/
-inline QDate      SSField::asDate(const char *format) const {
-    return ((!format) ? value().toDate() : QDate::fromString(asString(), format));
+// inline QDate      SSField::toDate(const char *format = SS_DB_DATE_FORMAT) const;/*{{{*/
+inline QDate SSField::toDate(const char *format) const {
+    return ((!format) ? value.toDate() : QDate::fromString(toString(), format));
 }
 /*}}}*/
-// inline QTime      SSField::asTime(const char *format = SS_DB_TIME_FORMAT) const;/*{{{*/
-inline QTime      SSField::asTime(const char *format) const {
-    return ((!format) ? value().toTime() : QTime::fromString(asString(), format));
+// inline QTime      SSField::toTime(const char *format = SS_DB_TIME_FORMAT) const;/*{{{*/
+inline QTime SSField::toTime(const char *format) const {
+    return ((!format) ? value.toTime() : QTime::fromString(toString(), format));
 }
 /*}}}*/
-// inline QDateTime  SSField::asTimestamp() const;/*{{{*/
-inline QDateTime  SSField::asTimestamp() const {
-    return QDateTime::fromMSecsSinceEpoch((qint64)asLong());
+// inline QDateTime  SSField::toTimestamp() const;/*{{{*/
+inline QDateTime SSField::toTimestamp() const {
+    return QDateTime::fromMSecsSinceEpoch((qint64)toLong());
 }
 /*}}}*/
 // Public: Value Conversion }}}
@@ -454,22 +436,12 @@ inline QDateTime  SSField::asTimestamp() const {
  * ------------------------------------------------------------------------ */
 // inline SSField::operator bool() const;/*{{{*/
 inline SSField::operator bool() const {
-    return isNull();
+    return !isNull();
 }
 /*}}}*/
-// inline SSField& SSField::operator =(const QString &val);/*{{{*/
-inline SSField& SSField::operator =(const QString &val) {
-    value( QVariant(val) ); return *this;
-}
-/*}}}*/
-// inline SSField& SSField::operator =(double val);/*{{{*/
-inline SSField& SSField::operator =(double val) {
-    value(QVariant(val)); return *this;
-}
-/*}}}*/
-// inline SSField& SSField::operator =(int val);/*{{{*/
-inline SSField& SSField::operator =(int val) {
-    value( QVariant(val) ); return *this;
+// inline bool SSField::operator ==(const SSField &field) const;/*{{{*/
+inline bool SSField::operator ==(const SSField &field) const {
+    return ((m_column == field.m_column) && (value == field.value));
 }
 /*}}}*/
 // Overloaded Operators }}}

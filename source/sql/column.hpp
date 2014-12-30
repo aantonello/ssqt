@@ -24,6 +24,8 @@ namespace ss {
 /**
  * \internal
  * Base implementation of a table column.
+ * A column has only column specification. Values are kept in \c SSField
+ * objects.
  * @since 1.2
  *//* --------------------------------------------------------------------- */
 class column_t : public SSSharedT<column_t>
@@ -186,7 +188,7 @@ public:
     /*}}}*/
     //@}
 public:
-    /** @name Import & Export Operations */ //@{
+    /** @name Operations */ //@{
     // void reset(const QSqlField &field, const QSqlIndex &index = QSqlIndex());/*{{{*/
     /**
      * Reset this column with the information in the passed field.
@@ -199,41 +201,6 @@ public:
      **/
     void reset(const QSqlField &field, const QSqlIndex &index = QSqlIndex());
     /*}}}*/
-    // bool commit(QSqlRecord *record);/*{{{*/
-    /**
-     * Commits the value of this column to a field in the passed record.
-     * @param record \c QSqlRecord to be updated.
-     * @return \b true means the value was set. \b false is returned when the
-     * \c QSqlRecord object doesn't have a field with the same name as this
-     * column object.
-     * @since 1.2
-     **/
-    bool commit(QSqlRecord *record);
-    /*}}}*/
-    //@}
-public:
-    /** @name Overloaded Operators */ //@{
-    // column_t& operator =(const QSqlField &field);/*{{{*/
-    /**
-     * Assignment operator.
-     * @param field The \c QSqlField object with the original data.
-     * @return This operation returns \b this.
-     * @remarks The result of this operation is the same as calling the member
-     * function #reset() without the last parameter.
-     * @since 1.2
-     **/
-    column_t& operator =(const QSqlField &field);
-    /*}}}*/
-    // column_t& operator =(const column_t &column);/*{{{*/
-    /**
-     * Copy operator.
-     * @param column Another \c column_t object to copy its properties. All
-     * data will be duplicated.
-     * @returns \b this.
-     * @since 1.2
-     **/
-    column_t& operator =(const column_t &column);
-    /*}}}*/
     //@}
 public:
     /** @name Data Members */ //@{
@@ -245,13 +212,6 @@ public:
      * @since 1.2
      **/
     QString  name;
-    /*}}}*/
-    // QVariant value;/*{{{*/
-    /**
-     * This column value.
-     * @since 1.2
-     **/
-    QVariant value;
     /*}}}*/
     // size_t   length;/*{{{*/
     /**
@@ -294,8 +254,7 @@ inline column_t::column_t(const QString &fieldName, QVariant::Type type) :
 /*}}}*/
 // inline column_t::column_t(const column_t &column);/*{{{*/
 inline column_t::column_t(const column_t &column) : SSSharedT<column_t>(),
-    name(column.name), value(column.value), length(column.length),
-    flags(column.flags) { }
+    name(column.name), length(column.length), flags(column.flags) { }
 /*}}}*/
 // inline column_t::column_t(const QSqlField &field, const QSqlIndex &index = QSqlIndex());/*{{{*/
 inline column_t::column_t(const QSqlField &field, const QSqlIndex &index) :
@@ -356,22 +315,6 @@ inline int  column_t::precision() const {
 }
 /*}}}*/
 // Properties }}}
-/* ---------------------------------------------------------------------------
- * Overloaded Operators {{{
- * ------------------------------------------------------------------------ */
-// inline column_t& column_t::operator =(const QSqlField &field);/*{{{*/
-inline column_t& column_t::operator =(const QSqlField &field) {
-    reset(field); return *this;
-}
-/*}}}*/
-// inline column_t& column_t::operator =(const column_t &column);/*{{{*/
-inline column_t& column_t::operator =(const column_t &column) {
-    name = column.name; value = column.value;
-    length = column.length; flags = column.flags;
-    return *this;
-}
-/*}}}*/
-// Overloaded Operators }}}
 /* ------------------------------------------------------------------------ */
 /* }}} Inline Functions */
 };

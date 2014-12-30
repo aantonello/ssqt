@@ -24,30 +24,20 @@
  * ======================================================================== */
 
 /* ---------------------------------------------------------------------------
- * Static Data Members
- * ------------------------------------------------------------------------ */
-SSField SSField::invalidField();    /**< Static member inicialization.      */
-
-/* ---------------------------------------------------------------------------
  * Constructors & Destructor
  * ------------------------------------------------------------------------ */
 
-// SSField::SSField(const QString &fieldName = QString(), QVariant::Type type = QVariant::Invalid);/*{{{*/
-SSField::SSField(const QString &fieldName, QVariant::Type type) :
-    m_column(new ss::column_t(fieldName, type))
-{
-}
-/*}}}*/
 // SSField::SSField(const SSField &field);/*{{{*/
-SSField::SSField(const SSField &field) :
-    m_column(field.m_column->retain())
+SSField::SSField(const SSField &field) : value(field.value), m_column(NULL)
 {
+    m_column = ((field.m_column) ? field.m_column->retain() : NULL);
 }
 /*}}}*/
-// SSField::SSField(const QSqlField &field, const QSqlIndex &index = QSqlIndex());/*{{{*/
-SSField::SSField(const QSqlField &field, const QSqlIndex &index) :
-    m_column(new ss::column_t(field, index))
+// SSField::SSField(ss::column_t *column, const QVariant &val);/*{{{*/
+SSField::SSField(ss::column_t *column, const QVariant &val) : value(val),
+    m_column(column)
 {
+    m_column = (column ? column->retain() : NULL);
 }
 /*}}}*/
 // SSField::~SSField();/*{{{*/
@@ -61,47 +51,32 @@ SSField::~SSField()
  * Public: Attributes
  * ------------------------------------------------------------------------ */
 
-// bool SSField::valid() const;/*{{{*/
-bool SSField::valid() const
-{
-    return (m_column != NULL);
-}
-/*}}}*/
 // bool SSField::autoValue() const;/*{{{*/
-bool SSField::autoValue() const
-{
+bool SSField::autoValue() const {
     return (valid() && m_column->autoValue());
 }
 /*}}}*/
-// bool SSField::readOnly() const;/*{{{*/
-bool SSField::readOnly() const
-{
-    return (valid() && m_column->readOnly());
+// bool SSField::isIndex() const;/*{{{*/
+bool SSField::isIndex() const {
+    return (valid() ? m_column->indexed() : false);
 }
 /*}}}*/
 // bool SSField::required() const;/*{{{*/
-bool SSField::required() const
-{
+bool SSField::required() const {
     return (valid() && m_column->required());
-}
-/*}}}*/
-// bool SSField::isNull() const;/*{{{*/
-bool SSField::isNull() const
-{
-    return (valid() && !m_column->isNull());
 }
 /*}}}*/
 // bool SSField::empty() const;/*{{{*/
 bool SSField::empty() const
 {
-    if (!valid()) return true;
+    if (!valid() || isNull()) return true;
 
     if ((m_column->dataType() == SS_DATA_TYPE_CHAR) ||
-        (m_column->dataType() == SS_DATA_TYPE_TEXT) ||
-        (m_column->dataType() == SS_DATA_TYPE_TIME) ||
-        (m_column->dataType() == SS_DATA_TYPE_DATE) ||
-        (m_column->dataType() == SS_DATA_TYPE_DATETIME))
-        return this->asString().isEmpty();
+        (m_column->dataType() == SS_DATA_TYPE_TEXT))
+        return asString().isEmpty();
+
+    if (m_column->dataType() == SS_DATA_TYPE_BLOB)
+        return asByteArray().isEmpty();
 
     return false;
 }
@@ -112,47 +87,36 @@ QString SSField::name() const
     return (valid() ? m_column->name : QString());
 }
 /*}}}*/
-// size_t  SSField::length() const;/*{{{*/
-size_t  SSField::length() const
-{
+// size_t  SSField::size() const;/*{{{*/
+size_t SSField::size() const {
     return (valid() ? m_column->length : 0);
 }
 /*}}}*/
-// size_t  SSField::precision() const;/*{{{*/
-size_t  SSField::precision() const
+// size_t  SSField::length() const;/*{{{*/
+size_t SSField::length() const
 {
+    if (value.isValid() && valid())
+    {
+        if ((m_column->dataType() == SS_DATA_TYPE_TEXT) ||
+            (m_column->dataType() == SS_DATA_TYPE_CHAR))
+            return asString().length();
+
+        if (m_column->dataType() == SS_DATA_TYPE_BLOB)
+            return asByteArray().length();
+    }
+    return 0;
+}
+/*}}}*/
+// size_t  SSField::precision() const;/*{{{*/
+size_t  SSField::precision() const {
     return (valid() ? m_column->precision() : 0);
 }
 /*}}}*/
 // uint SSField::type() const;/*{{{*/
-uint SSField::type() const
-{
+uint SSField::type() const {
     return (valid() ? m_column->dataType() : 0);
 }
 /*}}}*/
-
-/* ---------------------------------------------------------------------------
- * Public: Properties
- * ------------------------------------------------------------------------ */
-
-// QVariant SSField::value() const;/*{{{*/
-QVariant SSField::value() const
-{
-    return (valid() ? m_column->value : QVariant());
-}
-/*}}}*/
-// void SSField::value(const QVariant &val);/*{{{*/
-void SSField::value(const QVariant &val)
-{
-    if (!valid()) return;
-    m_column->value = val;
-}
-/*}}}*/
-
-/* ---------------------------------------------------------------------------
- * Public: Value Conversion
- * ------------------------------------------------------------------------ */
-
 
 /* ---------------------------------------------------------------------------
  * Public: Overloaded Operators
@@ -163,10 +127,8 @@ SSField& SSField::operator =(const SSField &field)
 {
     if (valid()) m_column->release();
 
-    if (field.valid())
-        m_column = new ss::column_t(*(field.m_column));
-    else
-        m_column = NULL;
+    m_column = (field.valid() ? field.m_column->retain() : NULL);
+    value    = field.value;
 
     return *this;
 }

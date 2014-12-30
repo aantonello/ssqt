@@ -17,6 +17,9 @@ ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
    SSSharedT=. {
     ssqtshrd.hpp
    }
+   SSAutoSharedT=. {
+    ssqtaush.hpp
+   }
   }
   xml support=. {
    SSXMLElement=. {
@@ -34,17 +37,40 @@ ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
   }
   data access=. {
    internal=sql {
-    column.hpp
-    column.cpp
+    query parser=. {
+     query_toker class=. {
+      qtoker.hpp
+      qtoker.cpp
+     }
+     column_ref class=. {
+      colref.hpp
+      colref.cpp
+     }
+     query_parser class=. {
+      queryp.hpp
+      queryp.cpp
+     }
+    }
+    column_t class=. {
+     column.hpp
+     column.cpp
+    }
+    dataset class=. {
+     dataset.hpp
+     dataset.cpp
+    }
    }
    SSField=. {
     ssqtfld.hpp
     ssqtfld.cpp
    }
-   SSRecordT=. {
+   SSRecord=. {
     ssqtrec.hpp
+    ssqtrec.cpp
    }
    SSRecordset=. {
+    ssqtrst.hpp
+    ssqtrst.cpp
    }
   }
   ui=. {

@@ -23,6 +23,7 @@
 
 /* Utilities */
 #include "ssqtshrd.hpp"
+#include "ssqtaush.hpp"
 
 /* XML support */
 #include "ssqtxmle.hpp"

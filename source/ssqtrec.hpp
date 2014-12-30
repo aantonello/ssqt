@@ -1,6 +1,6 @@
 /**
  * @file
- * Declares the SSRecordT class template.
+ * Declares the SSRecord class.
  *
  * @author Alessandro Antonello <aantonello@paralaxe.com.br>
  * @date   dezembro 10, 2014
@@ -16,90 +16,109 @@
 #ifndef __SSQTREC_HPP_DEFINED__
 #define __SSQTREC_HPP_DEFINED__
 
+namespace ss {
+    class column_t;
+};
+
 /**
- * Class template representing a data record.
- * Instances of this class template are backed by a list of \c SSSField
- * objects. Each \c SSField is a copy of the original. Despite that, each \c
- * SSField has a reference to the original data extracted from the database.
- * This means that changing the value of one instance will be reflected on all
- * copies.
+ * \ingroup ssqt_dao
+ * A class representing a row of data.
+ * An \c SSRecord class is intended to be used as a shared pointer. That is,
+ * no instances of this class are created in the stack. All are heap allocated
+ * to be shared among all \c SSRecordset objects that need them. To allow the
+ * control of usage an \c SSRecord class extends \c SSSharedT template class
+ * that provides a reference counting mechanism. You should never keep
+ * a pointer to a \c SSRecord object directly. Instead you should access it
+ * through the \c SSRecordset object. But, if you really need to do so, you
+ * must retain (SSSharedT::retain()) your pointer reference while you need it.
+ * In the same way, you must never delete a pointer to a \c SSRecord object by
+ * your self. When you non longer need you pointer reference you release it by
+ * calling SSSharedT::release(). You could also use a \c SSAutoSharedT
+ * template class. It is a value class and automatically releases the pointer
+ * reference when it goes out of scope.
+ * ~~~~~~~~~~~~~~~{.cpp}
+ * SSAutoSharedT<SSRecord> sharedRecord;
+ * ...
+ * sharedRecord = recordset.record();   // Retain the SSRecord pointer.
+ * sharedRecord->field(0).value = 0;    // Use the SSRecord pointer.
+ * ...
+ * // When the 'sharedRecord' object goes out of scope the SSRecord pointer
+ * // reference is released.
+ * ...
+ * sharedRecord = NULL;     // Setting to NULL also releases the pointer.
+ * ~~~~~~~~~~~~~~~
  *
- * \c SSRecordT is provided as a template so you can build a structure or
- * class to hold the data using standard Qt properties or more clever
- * implementations. You can bind the data with your structure or class in the
- * #reset() member function. The other way around, to pass the data of your
- * structure or class to the underling \c SSField object can be done in the
- * #commit() member function.
- * \par Default Prefix
+ * A data row is a list of \c SSField objects. Each \c SSField object has
+ * a reference to its column definition and holds the field data. This
+ * structure is liter than the Qt implementation where each \c QSqlField
+ * object has both definition and value.
  *
- * Some people like to prefix column's names with some common characters. For
- * example, a "users" table can have all its column's prefixed with the
- * substring "user_". Then the column "name" would become "user_name", the
- * column "age" would become "user_age", and so on. The \c SSRecordT has
- * a feature around this usage. When opening a query or table you can define
- * a default prefix for all columns loaded. This is done in the
- * SSRecordsetT::defaultPrefix() method. When defined, columns can be searched
- * by its suffix name only. That is, the \c SSRecordT::field(const QString&)
- * method will accept the string "name" and recognize it as the column
- * "user_name".
- * \tparam _Typ Your base class or structure specialized to use the data of
- * this record. Must provide a default constructor that will be called on any
- * constructor of this template.
+ * You can extend a \c SSRecord class to hold the database data using standard
+ * Qt properties or more clever implementations. The loaded data can be bound
+ * the instance members in the SSRecord::onRead() virtual function. If the
+ * record is changed and the data needs to be wrote in the database, the
+ * SSRecord::onWrite() virtual function is called so you can pass the values
+ * in your extension to the fields held by the \c SSRecord object. Just don't
+ * forget that an \c SSRecord object is used only in the heap as a shared
+ * pointer.
+ * \par Columns Names
+ *
+ * Is common to name columns of a table using a standard prefix. For
+ * example, a "users" table can have all its columns prefixed with the
+ * string "user_". The \c SSRecord object has the SSRecord::defaultPrefix()
+ * property that is inherited from \c SSRecordset object. This allows you to
+ * find a field by using its \e shorter name, without the prefix. Using the
+ * previous example, you can find the "user_name" field by searching for the
+ * string "name" only, or search for the field named "user_id" by using the
+ * string "id" or "user_id", which ever you like.
  * @since 1.2
  *//* --------------------------------------------------------------------- */
-template <typename _Typ>
-class SSRecordT : public _Typ
+class SSRecord : public SSSharedT<SSRecord>
 {
-    typedef super _Typ;             /**< The super type. */
-
 public:
     /** @name Constructors & Destructors */ //@{
-    // SSRecordT();/*{{{*/
+    // SSRecord();/*{{{*/
     /**
      * Default constructor.
-     * Builds an empty \c SSRecordT object. This constructor will call
-     * #reset() even so there is no data to load.
+     * Builds an empty \c SSRecord object. This constructor does not call
+     * SSRecord::onRead(). There is no data to read.
      * @since 1.2
      **/
-    SSRecordT() : super(), m_fields() {
-        reset();
-    }
+    SSRecord();
     /*}}}*/
-    // SSRecordT(const SSRecordT<_Typ> &record);/*{{{*/
+    // SSRecord(const SSRecord &record) = delete;/*{{{*/
     /**
      * Copy constructor.
-     * @param record Another \c SSRecordT instance of the same type. All
-     * fields of it will be copied. Which, in the end, has only references to
-     * the original fields.
-     * @remarks The #reset() member function is called to provide the
-     * specialization to load the data.
+     * @param record Another \c SSRecord instance.
+     * @remarks The copy constructor is disabled in this class.
      * @since 1.2
      **/
-    SSRecordT(const SSRecordT<_Typ> &record) :
-        super(), m_fields(record.m_fields), m_prefix(record.m_prefix)
-    { reset(); }
+    SSRecord(const SSRecord &record) = delete;
     /*}}}*/
-    // SSRecordT(const QSqlRecord &record, const QSqlIndex &index = QSqlIndex(), const QString &prefix = QString());/*{{{*/
+    // SSRecord(const QList<SSField> &fields, const QString &prefix = QString());/*{{{*/
     /**
-     * Builds the \c SSRecordT instance with data from the provided record.
-     * @param record \c QSqlRecord object with the data. It will be used to
-     * load the columns in the list of fields.
-     * @param index \c QSqlIndex with the indexes of the query or table.
-     * Optional.
+     * Builds the \c SSRecord instance with data from the provided record.
+     * @param fields List of fields for this record.
      * @param prefix Optional, Default prefix for columns names.
      * @remarks This constructor is not meant to be called by the user. It is
-     * used to load a record from the \c SSRecordsetT template class.
-     * @note The #reset() method will be called after the list of fields
-     * has been mounted.
+     * used to load a record in the \c SSRecordset class. Extended classes
+     * must provide a constructor with this signature.
+     * @note The SSRecord::onRead() method will be called after the list of
+     * fields has been mounted.
      * @since 1.2
      **/
-    SSRecordT(const QSqlRecord &record, const QSqlIndex &index = QSqlIndex(),
-              const QString &prefix = QString()) : super(), m_prefix(prefix)
-    { apply(record, index, prefix); }
+    SSRecord(const QList<SSField> &fields, const QString &prefix = QString());
+    /*}}}*/
+    // ~SSRecord();/*{{{*/
+    /**
+     * Default destructor.
+     * @since 1.2
+     **/
+    ~SSRecord();
     /*}}}*/
     //@}
 public:
-    /** @name Record Attributes */ //@{
+    /** @name Attributes */ //@{
     // size_t count() const;/*{{{*/
     /**
      * Retrieves the number of fields in this record.
@@ -107,9 +126,7 @@ public:
      * record.
      * @since 1.2
      **/
-    size_t count() const {
-        return m_fields.count();
-    }
+    size_t count() const;
     /*}}}*/
     // bool   empty() const;/*{{{*/
     /**
@@ -117,72 +134,50 @@ public:
      * @returns \b true when this record has no fields. Otherwise \b false.
      * @since 1.2
      **/
-    bool   empty() const {
-        return m_fields.isEmpty();
-    }
+    bool   empty() const;
     /*}}}*/
     // bool   has(const QString &fieldName) const;/*{{{*/
     /**
      * Checks whether this record has a field named \e fieldName.
      * @param fieldName \c QString with the field name to be queried. If
-     * a default prefix was defined, this parameter can be only the suffix
-     * part of the column name.
+     * a default prefix was defined, this parameter may be the suffix part of
+     * the column name.
      * @return \b true if the field exists, otherwise \b false.
      * @since 1.2
      **/
-    bool has(const QString &fieldName) const {
-        return (indexOf(fieldName) >= 0);
-    }
+    bool has(const QString &fieldName) const;
     /*}}}*/
     // int    indexOf(const QString &fieldName) const;/*{{{*/
     /**
      * Query the index of a field by its name.
      * @param fieldName \c QString with the field name to be queried. If
-     * a default prefix was defined, this parameter can be only the suffix
-     * part of the column name.
+     * a default prefix was defined, this parameter can be the suffix part of
+     * the column name.
      * @return A value equals to or greater than zero is the field index.
      * A value less than zero when the name was not found.
      * @since 1.2
      **/
-    int indexOf(const QString &fieldName) const
-    {
-        size_t limit = count();
-
-        if (m_prefix.isEmpty())
-        {
-            for (size_t i = 0; i < limit; ++i)
-            {
-                if (fieldName == m_fields.at(i).name())
-                    return (int)i;
-            }
-        }
-        else
-        {
-            QString prefixedName(m_prefix).append(fieldName);
-            SSField field;
-
-            for (size_t i = 0; i < limit; ++i)
-            {
-                field = m_fields.at(i);
-                if ((fieldName == field.name()) || (prefixedName == field.name()))
-                    return (int)i;
-            }
-        }
-        return -1;
-    }
+    int indexOf(const QString &fieldName) const;
+    /*}}}*/
+    // QString  defaultPrefix() const;/*{{{*/
+    /**
+     * Retrieves the default prefix defined for this record.
+     * @return A \c QString object with the default prefix defined. When
+     * a default prefix is not in use the result is an empty object.
+     * @since 1.2
+     **/
+    QString  defaultPrefix() const;
     /*}}}*/
     // SSField& field(uint index);/*{{{*/
     /**
      * Gets a non-const reference to a field in this record.
      * @param index Zero based index of the field.
      * @return A non-const reference to the specified field. If the value of
-     * \a index is invalid an empty (invalid) \c SSField object will be
+     * \a index is invalid, an empty (invalid) \c SSField object will be
      * returned.
      * @since 1.2
      **/
-    SSField& field(uint index) {
-        return ((index >= count()) ? SSField::invalidField : m_list[index]);
-    }
+    SSField& field(uint index);
     /*}}}*/
     // SSField& field(const QString &fieldName);/*{{{*/
     /**
@@ -195,210 +190,207 @@ public:
      * (invalid) field will be returned.
      * @since 1.2
      **/
-    SSField& field(const QString &fieldName) {
-        int index = indexOf(fieldName);
-        return field(index);
-    }
-    /*}}}*/
-    // const SSField& field(uint index) const;/*{{{*/
-    /**
-     * Gets a const reference to a field in this record.
-     * @param index Zero based index of the field.
-     * @return A const reference to the specified field. If the value of
-     * \a index is invalid an empty (invalid) \c SSField object will be
-     * returned.
-     * @since 1.2
-     **/
-    const SSField& field(uint index) const {
-        return ((index >= count()) ? SSField::invalidField : m_list.at(index));
-    }
-    /*}}}*/
-    // const SSField& field(const QString &fieldName) const;/*{{{*/
-    /**
-     * Gets a const reference to a field in this record.
-     * @param fieldName \c QString with the field name to be retrieved. If
-     * a default prefix was defined, this parameter can be only the suffix
-     * part of the column name.
-     * @return A const reference to the specified field. If the value of
-     * \a fieldName is invalid (not found in the list of fields) an empty
-     * (invalid) field will be returned.
-     * @since 1.2
-     **/
-    const SSField& field(const QString &fieldName) const {
-        int index = indexOf(fieldName);
-        return field(index);
-    }
+    SSField& field(const QString &fieldName);
     /*}}}*/
     //@}
 public:
     /** @name Operations */ //@{
-    // size_t  apply(const QSqlRecord &record, const QSqlIndex &index = QSqlIndex(), const QString &prefix = QString());/*{{{*/
-    /**
-     * Reset this object to read the data in the passed record.
-     * @param record \c QSqlRecord object having the data to be copied.
-     * @param index Optional. List of indexes of the origin table. Used to
-     * properly configure the fields.
-     * @param prefix Optional. Common prefix of the fields names. If not
-     * passed no prefix will be used.
-     * @return The number of fields read.
-     * @remarks This member function is called from the result of \c
-     * SSRecordsetT template class in response to a read operation.
-     * @since 1.2
-     **/
-    size_t  apply(const QSqlRecord &record, const QSqlIndex &index = QSqlIndex(), const QString &prefix = QString())
-    {
-        m_fields.clear();
-        m_prefix = prefix;
-
-        int limit = record.count();
-        QSqlField qtField;
-
-        for (int i = 0; i < limit; ++i)
-        {
-            qtField = record.field(i);
-            m_fields.append(SSField(qtField, index));
-        }
-
-        reset();
-        return (size_t)m_fields.count();
-    }
-    /*}}}*/
-    // error_t commit(QSqlRecord *record);/*{{{*/
-    /**
-     * Commit changed data back to the origin record.
-     * @param record \c QSqlRecord to be populated with the data in this
-     * object.
-     * @returns \c SSNO_ERROR when everything goes Ok. Otherwise, an error
-     * code will be returned.
-     * @remarks This operation is called from the owner \c SSRecordsetT
-     * instance when it needs to update the database. This operation calls the
-     * virtual function #commit() and then populates the \a record parameter
-     * with the data in the fields. If the \c commit() is overloaded by the
-     * user and returns an error code, the operation is aborted.
-     * @since 1.2
-     **/
-    error_t commit(QSqlRecord *record)
-    {
-        error_t result = commit();
-
-        if (result != SSNO_ERROR) return result;
-        SSField field;
-        size_t  limit = count();
-
-        for (size_t i = 0; i < limit; ++i)
-        {
-            field = m_fields.at(i);
-            record->setValue(field.name(), field.value());
-        }
-        return result;
-    }
-    /*}}}*/
-    // void    clear();/*{{{*/
+    // void clear();/*{{{*/
     /**
      * Clear the list of fields of this record.
      * @since 1.2
      **/
-    void clear() {
-        m_list.clear();
-    }
+    void clear();
+    /*}}}*/
+    //@}
+public:
+    /** @name Record Lock */ //@{
+    // bool lock(void *context);/*{{{*/
+    /**
+     * Locks this record for a given context.
+     * @param context Pointer to the context where this record is locked.
+     * @returns \b true if the operation succeeds. Otherwise \b false.
+     * @remarks The operation can fail if this record is already locked by
+     * another context.
+     * @note A context is simply a way to differenciate lockers. It is not
+     * changed nor used in the \c SSRecord class.
+     * @since 1.2
+     **/
+    bool lock(void *context);
+    /*}}}*/
+    // bool locked() const;/*{{{*/
+    /**
+     * Checks whether this record is locked.
+     * @returns \b true when this record object is locked. \b false otherwise.
+     * @since 1.2
+     **/
+    bool locked() const;
+    /*}}}*/
+    // bool unlock(void *context);/*{{{*/
+    /**
+     * Unlock this record.
+     * @param context The same context used to lock this record.
+     * @returns \b true if the record was unlocked. \b false otherwise.
+     * @remarks The operation can fail if the passed \a context is not the
+     * same used to lock this record. When the record wasn't locked, the
+     * result will be \b true.
+     * @note A context is simply a way to differenciate lockers. It is not
+     * changed nor used in the \c SSRecord class.
+     * @since 1.2
+     **/
+    bool unlock(void *context);
+    /*}}}*/
+    // bool lockedContext(void *context);/*{{{*/
+    /**
+     * Checks whether the locked context is equals to the passed one.
+     * @param context A context pointer to check for the current lock.
+     * @returns \b true when this record is locked using the context pointed
+     * at \a context. Otherwise \b false. This operation also returns \b false
+     * when the record is not locked at all.
+     * @note A context is simply a way to differenciate lockers. It is not
+     * changed nor used in the \c SSRecord class.
+     * @since 1.2
+     **/
+    bool lockedContext(void *context);
     /*}}}*/
     //@}
 public:
     /** @name Overloaded Operators */ //@{
-    // SSRecordT<_Typ>& operator =(const SSRecordT<_Typ> &record);/*{{{*/
+    // SSRecord& operator =(const SSRecord &record) = delete;/*{{{*/
     /**
      * Copy operator.
-     * @param record Other \c SSRecordT instance to copy its data.
+     * @param record Other \c SSRecord instance to copy its data.
      * @return \b this.
+     * @remarks This operator is deleted.
      * @since 1.2
      **/
-    SSRecordT<_Typ>& operator =(const SSRecordT<_Typ> &record) {
-        m_fields = record.m_fields;
-        m_prefix = record.m_prefix;
-        return *this;
-    }
-    /*}}}*/
-    // SSField& operator()(uint index);/*{{{*/
-    /**
-     * Gets a reference to a field of this record.
-     * @param index Zero based index of the field.
-     * @return A non-const reference to the specified field. If the value of
-     * \a index is invalid an empty (invalid) \c SSField object will be
-     * returned.
-     * @remarks Internally this operator calls #field(uint).
-     * @since 1.2
-     **/
-    SSField& operator()(uint index) {
-        return field(index);
-    }
-    /*}}}*/
-    // SSField& operator()(const QString &fieldName);/*{{{*/
-    /**
-     * Gets a reference to a field of this record.
-     * @param fieldName \c QString with the field name to be retrieved. If
-     * a default prefix was defined, this parameter can be only the suffix
-     * part of the column name.
-     * @return A non-const reference to the specified field. If the value of
-     * \a fieldName is invalid (not found in the list of fields) an empty
-     * (invalid) field will be returned.
-     * @remarks Internally this operator calls #field(const QString&).
-     * @since 1.2
-     **/
-    SSField& operator()(const QString &fieldName) {
-        return field(fieldName);
-    }
+    SSRecord& operator =(const SSRecord &record) = delete;
     /*}}}*/
     //@}
-protected:
+public:
     /** @name Overridables */ //@{
-    // virtual void reset();/*{{{*/
+    // virtual void onRead();/*{{{*/
     /**
-     * Called so the implementors can reset its member variables.
-     * This operation is called after the #apply() function resets the
-     * internal list of fields.
+     * Called so the implementors can read the new data.
+     * This operation is called when this record object has new data.
      * @note The default implementation does nothing.
      * @since 1.2
      **/
-    virtual void reset() {
-    }
+    virtual void onRead();
     /*}}}*/
-    // virtual error_t commit();/*{{{*/
+    // virtual error_t onWrite();/*{{{*/
     /**
      * Called so the implementors update the list of fields.
-     * This operation is called before the #commit(QSqlRecord*) member
-     * function pass the fields values to the \e record argument.
-     * @return Function should return \c SSNO_ERROR on success. An error code
-     * on failure. When an error code is returned the \c commit(QSqlRecord*)
-     * operation is aborted. The result of that function will be the same as
-     * this one.
+     * Called when this class needs the most recent data on its list of
+     * fields. If extended classes keeps fields data on member variables, for
+     * example, this is the time to copy the values in the correspondent \c
+     * SSField object.
+     * @return This function should return \c SSNO_ERROR on success or an
+     * error code on failure.
      * @note The default implementation simply returns \c SSNO_ERROR.
      * @since 1.2
      **/
-    virtual error_t commit() {
-        return SSNO_ERROR;
-    }
+    virtual error_t onWrite();
     /*}}}*/
     //@}
 protected:
     /** @name Data Members */ //@{
     QList<SSField> m_fields;            /**< List of fields in this record. */
     QString m_prefix;                   /**< Default columns prefix name.   */
+    void *m_lock;                       /**< When this record is locked.    */
     //@}
 };
-
-/**
- * Dummy structure allowing the creation of \c SSRecord instances.
- * @since 1.2
- *//* --------------------------------------------------------------------- */
-typedef struct ss_record_t {
-    intptr_t noValue;
-} record_t;
-
-/**
- * Default \c SSRecordT implementation.
- * Uses the dummy \c record_t structure as it biases.
- * @since 1.2
- *//* --------------------------------------------------------------------- */
-typedef SSRecordT<record_t> SSRecord;
-
+/* Inline Functions {{{ */
+/* ---------------------------------------------------------------------------
+ * Constructors & Destructor {{{
+ * ------------------------------------------------------------------------ */
+// inline SSRecord::SSRecord();/*{{{*/
+inline SSRecord::SSRecord() { }
+/*}}}*/
+// inline SSRecord::SSRecord(const QList<SSField> &fields, const QString &prefix = QString());/*{{{*/
+inline SSRecord::SSRecord(const QList<SSField> &fields, const QString &prefix) :
+    m_fields(fields), m_prefix(prefix) { onRead(); }
+/*}}}*/
+// inline SSRecord::~SSRecord();/*{{{*/
+inline SSRecord::~SSRecord() { }
+/*}}}*/
+// Constructors & Destructor }}}
+/* ---------------------------------------------------------------------------
+ * Attributes {{{
+ * ------------------------------------------------------------------------ */
+// inline size_t SSRecord::count() const;/*{{{*/
+inline size_t SSRecord::count() const {
+    return m_fields.count();
+}
+/*}}}*/
+// inline bool   SSRecord::empty() const;/*{{{*/
+inline bool SSRecord::empty() const {
+    return m_fields.isEmpty();
+}
+/*}}}*/
+// inline bool   SSRecord::has(const QString &fieldName) const;/*{{{*/
+inline bool SSRecord::has(const QString &fieldName) const {
+    return (indexOf(fieldName) >= 0);
+}
+/*}}}*/
+// inline QString  SSRecord::defaultPrefix() const;/*{{{*/
+inline QString SSRecord::defaultPrefix() const {
+    return m_prefix;
+}
+/*}}}*/
+// inline SSField& SSRecord::field(const QString &fieldName);/*{{{*/
+inline SSField& SSRecord::field(const QString &fieldName) {
+    return field(indexOf(fieldName));
+}
+/*}}}*/
+// Attributes }}}
+/* ---------------------------------------------------------------------------
+ * Operations {{{
+ * ------------------------------------------------------------------------ */
+// inline void SSRecord::clear();/*{{{*/
+inline void SSRecord::clear() {
+    m_fields.clear();
+}
+/*}}}*/
+// Operations }}}
+/* ---------------------------------------------------------------------------
+ * Record Lock {{{
+ * ------------------------------------------------------------------------ */
+// inline bool SSRecord::lock(void *context);/*{{{*/
+inline bool SSRecord::lock(void *context) {
+    if ((m_lock != NULL) && (m_lock != context)) return false;
+    m_lock = context; return true;
+}
+/*}}}*/
+// inline bool SSRecord::locked() const;/*{{{*/
+inline bool SSRecord::locked() const {
+    return (m_lock != NULL);
+}
+/*}}}*/
+// inline bool SSRecord::unlock(void *context);/*{{{*/
+inline bool SSRecord::unlock(void *context) {
+    if ((m_lock != NULL) && (m_lock != context)) return false;
+    m_lock = NULL; return true;
+}
+/*}}}*/
+// inline bool SSRecord::lockedContext(void *context);/*{{{*/
+inline bool SSRecord::lockedContext(void *context) {
+    return (m_lock == context);
+}
+/*}}}*/
+// Record Lock }}}
+/* ---------------------------------------------------------------------------
+ * Public: Overridables {{{
+ * ------------------------------------------------------------------------ */
+// inline void SSRecord::onRead();/*{{{*/
+inline void SSRecord::onRead() { }
+/*}}}*/
+// inline error_t SSRecord::onWrite();/*{{{*/
+inline error_t SSRecord::onWrite() {
+    return SSNO_ERROR;
+}
+/*}}}*/
+// Public: Overridables }}}
+/* ------------------------------------------------------------------------ */
+/* }}} Inline Functions */
 #endif /* __SSQTREC_HPP_DEFINED__ */
