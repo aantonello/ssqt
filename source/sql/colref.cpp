@@ -41,6 +41,7 @@ bool column_ref::parse(query_toker &toker, token &tk)
 
     tokenList << tk;
 
+    /* Stops parsing when we found a comma or the 'FROM' clause. */
     while (!toker.atEOF())
     {
         tempToken = toker.next();
@@ -55,7 +56,11 @@ bool column_ref::parse(query_toker &toker, token &tk)
         tokenList << tempToken;
     }
 
-    if (tokenList.count() == 1)     /* Must be the column name. */
+    /* If the token list has only one member it can only be a column name.
+     * Check if the name is enclosed into quotes and terminate this parsing
+     * job.
+     */
+    if (tokenList.count() == 1)
     {
         columnName = tokenList[0].stringRef();
         columnAlias = columnName;
