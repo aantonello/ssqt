@@ -14,3 +14,15 @@ Windows. It is built on top of Qt so to keep it cross platform. But it will
 uses some Windows specific operations when required and when targeting that
 platform.
 
+## Version 1.3
+
+Some changes in this version are note backward compatible with previous
+versions. Current changes so far:
+
+### Assets Module
+
+This module was completely redesigned and are totaly different. Functions are
+packed in the **assets** namespace that is not designed to be imported (that
+means no `using namespace assets`). Read the documentation on @ref ssqt_assets
+group.
+

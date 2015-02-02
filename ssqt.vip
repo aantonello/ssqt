@@ -23,7 +23,7 @@ ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
     ssqtxmld.cpp
    }
   }
-  resources=. {
+  assets=. {
    ssqtasst.hpp
    ssqtasst.cpp
   }
@@ -80,5 +80,8 @@ ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
  .gitignore
  README.md
  onload.vim
+ Makefile
+ doxyfile
+ ssqt.css
  ChangeLog
 }

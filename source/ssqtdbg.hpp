@@ -52,18 +52,18 @@
 #endif /* defined(MSC_VER) */
 ///@} internal
 
-#if defined(QT_NO_DEBUG)
+#if defined(QT_NO_DEBUG) || defined(NDEBUG)
 # define ssprint(...)
 # define ssdebug(...)
 # define sstrace(...)
 # define ssflush(h, p, s, t)
 # define ssassert(expr, msg)
 #else
-# define ssprint(fmt, ...)      __ss_debug(NULL, 0, (fmt), ##__VA_ARGS__)
-# define ssdebug(fmt, ...)      __ss_debug(__FILE__, __LINE__, (fmt), ##__VA_ARGS__)
-# define sstrace(fmt, ...)      __ss_trace(Q_FUNC_INFO, (fmt), ##__VA_ARGS__)
-# define ssflush(h, p, s, t)    __ss_flush((h), (p), (s), (t))
-# define ssassert(expr, msg)    while (!(expr)) { ssdebug(msg); ssbreak(); }
+# define ssprint(fmt, ...)        __ss_debug(NULL, 0, (fmt), ##__VA_ARGS__)
+# define ssdebug(fmt, ...)        __ss_debug(__FILE__, __LINE__, (fmt), ##__VA_ARGS__)
+# define sstrace(fmt, ...)        __ss_trace(Q_FUNC_INFO, (fmt), ##__VA_ARGS__)
+# define ssflush(h, p, s, t)      __ss_flush((h), (p), (s), (t))
+# define ssassert(expr, msg)      while (!(expr)) { __ss_debug(NULL, 0, (msg)); ssbreak(); }
 #endif  /* !defined(QT_NO_DEBUG) */
 /* Documentation {{{ */
 // #define SST(str) {{{
@@ -95,6 +95,7 @@
  * Writes formated debugging output.
  * This macro expands to nothing when \c QT_NO_DEBUG is defined. Otherwise it
  * will expand to \c __ss_debug() function. Read its documentation to.
+ * @since 1.3
  **/// }}}
 // #define ssdebug(fmt, ...) {{{
 /**
@@ -105,6 +106,7 @@
  * will expand to \c __ss_debug() function.
  * @remarks This macro outputs the file name and line number where it is used
  * automatically. If you don't want that use \c ssprint() instead.
+ * @since 1.3
  **/ // }}}
 // #define sstrace(fmt, ...) {{{
 /**
@@ -115,6 +117,7 @@
  * will expand to \c __ss_trace() function.
  * @remarks This macro outputs the current function name using the \c
  * Q_FUNC_INFO macro. If you don't want that use \c ssprint() instead.
+ * @since 1.3
  **/// }}}
 // #define ssflush(h, p, s, t) {{{
 /**
@@ -130,6 +133,7 @@
  * @param s Size of the memory pointed by \a p. Ignored if \a p is \b NULL.
  * @param t An optional tail text. Will be printed after the binary data. Must
  * be a pointer to a \c char array or \b NULL.
+ * @since 1.3
  **/// }}}
 // #define ssassert(expr, msg) {{{
 /**
@@ -145,7 +149,7 @@
  * nothing is done. When this expression evaluates to \b false the text passed
  * in the \a msg argument is written in the debugging output and the execution
  * will stopped with the `int 3` interruption.
- * @since 1.0
+ * @since 1.3
  **/// }}}
 /* }}} Documentation */
 

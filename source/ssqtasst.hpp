@@ -33,7 +33,7 @@ class SSMenu;
  * \defgroup ssqt_assets Assets
  * Provides access to application assets.
  * We call assets any resource that are in the application bundle or compiled
- * in the application executable. Assets means resources and this class has
+ * in the application executable. Assets means resources and this module has
  * some operations to aid find these resources easily.
  *
  * Most functions relies on a standard way of data organization within the
@@ -47,226 +47,296 @@ class SSMenu;
  * ~~~~~~~~~~~~~~~~
  * #define IDI_APPICON  10  // Defined in a header somewhere.
  *
- * QIcon appIcon = asset_icon(IDI_APPICON);
+ * QIcon appIcon = assets::icon(IDI_APPICON);
  * ~~~~~~~~~~~~~~~~
  * The ".qrc" file would be written as shown in the following fragment.
  * ~~~~~~~~~~~~~~~~~~{.xml}
  * <RCC>
  *   <qresource prefix="/ico">
- *     <file alias="#10">icons/application_icon.ico</file>
+ *     <file alias="#10">res/icons/application_icon.ico</file>
  *   </qresource>
  * </RCC>
  * ~~~~~~~~~~~~~~~~~~
- * The standard groups recognized by the assets functions are:
- * - \b ico: List all icon files. Image files with ".ico" extension for
- *   Windows, ".icns" for Mac or ".pxm" for Linux. Can be loaded with \c
- *   ss::asset_icon() function.
- * - \b bmp: Standard image format for Windows applications. List of "bitmap"
- *   files. Can be loaded with \c ss::asset_image() or \c ss::asset_pixmap().
- * - \b png: List of images in Portable Network Graphics format. Works in all
- *   platforms. Can be loaded with \c ss::asset_image() or \c
- *   ss::asset_pixmap().
- * - \b svg: Scalable Vector Graphics. As the name says, is a vector graphic
- *   format. Is a drawing format that can be scaled to any size without
- *   loosing quality. Works on all platforms. Can be loaded with \c
- *   ss::asset_image() or \c ss::asset_pixmap().
- * - \b menu: Prefix used to group all menu resources written in XML format.
- *   Works on all platforms. Can be loaded with \c ss::asset_menu() or \c
- *   ss::asset_popup().
- * - \b string: Prefix used to group all string table resources in XML format.
- *   Works on all platforms. Not implemented yet.
- * .
+ * By following these standards you can organize and work with Qt resources
+ * very proficiently.
+ *
+ * All functions to work with Qt resources are in the "assets" namespace. This
+ * namespace was not meant to be imported since the function names are too
+ * common. The functions are all meant to be prefixed with the namespace name.
+ * \par Standard Prefixes
+ *
+ * As stated before the function \c assets::icon() will look for an image with
+ * the prefix "/ico" and a numeric alias prefixed with a '#' character. The
+ * path is built with \c assets::buildPath() function that you can use if you
+ * some resource the doesn't fit in the list below. In this list we show all
+ * the prefixes that are recognized by the assets functions.
+ *
+ * <dl>
+ * <dt>ico</dt>
+ * <dd>You can put all the icons in this prefix. Doesn't matter if the images
+ * has ".ico" extension or ".png" or ".gif". Even ".svg" files are supported
+ * by Qt when the appropriate plugin is present. These images can be loaded
+ * using the \c assets::icon() function that will return a \c QIcon
+ * object.</dd>
+ * <dt>png</dt>
+ * <dd>All Portable Network Graphics images can be listed in using this
+ * prefix. Notice that this is only to organize the images. Images of any type
+ * can be listed here. They are loaded using the \c assets::pixmap() function
+ * that will return a \c QPixmap object.</dd>
+ * <dt>img</dt>
+ * <dd>A general purpose image prefix. Can hold any type of image. They are
+ * loaded using \c assets::image() function that returns a \c QImage
+ * object.</dd>
+ * <dt>xml</dt>
+ * <dd>This is a special prefix to hold XML files. These files can be loaded
+ * using \c assets::xml() function that will return an \c SSXMLDocument
+ * object.</dd>
+ * <dt>menu</dt>
+ * <dd>Special prefix to hold menubars and popup menus in XML format. They are
+ * documented in the @ref ssqt_menus module. There are two functions to work
+ * with these kind of files: \c assets::menu() to load a menu bar and returns
+ * an \c SSMenu object, and \c assets::menuPopup() that load a popup menu
+ * returning a \c SSMenuPopup object.</dd>
+ * </dl>
  * @{ *//* ---------------------------------------------------------------- */
-namespace ss {
-// QString       asset_string(uint resID, size_t size = 1024);/*{{{*/
+namespace assets {
+
+// QString      buildPath(uint numericID, const QString &prefix);/*{{{*/
 /**
- * \ingroup ssqt_assets
- * Loads a string from the executable resource.
- * @param resID The identifier of the string in the resource. Despite be an
- * unsigned integer number this value is limited in 16 bits. This limit is
- * imposed by the Windows resource format.
- * @param size Length of the string resource, in characters. Strings are
- * compiled in the resource using UTF-16 encoding. Each character occupies
- * 2 byte in memory. Qt handles Unicode strings natively. So, the returned
- * string will be in Qt's internal encoding. This argument is optional and, if
- * not passed, the default length is 1024 characters. Strings greater than
- * this length needs to have this value passed or it will be loaded truncated.
- * @return If the string is found in the executable resource it is returned in
- * a \c QString object. Otherwise an empty \c QString object is returned.
- * @remarks This operation works only on Windows when a standard resource (rc
- * file) is compiled into the executable. In others operating systems the
- * result will be always an empty \c QString object.
- * @since 1.1
+ * @ingroup ssqt_assets
+ * Build the path for a resource using the conventions of this module.
+ * @param numericID The numeric alias used to name the resource file. In the
+ * "file" tag of the RCC resource it should be written prefixed with an '#'
+ * character. Example:
+ * <pre>
+ * <file alias="#10">res/path/file.ext</file>
+ * </pre>
+ * @param prefix Name prefix of the group. This is only the name used in the
+ * prefix attribute of the qresource tag. In the following example the value
+ * of this parameter should be "ico".
+ * <pre>
+ * <qresource prefix="/ico">...</qresource>
+ * </pre>
+ * @returns A \c QString object with the complete resource path built. The
+ * operation doesn't check if the resource exists or if the path is valid. It
+ * just build it with the passed parts.
+ * @since 1.3
  **/
-QString asset_string(uint resID, size_t size = 1024);
+QString buildPath(uint numericID, const QString &prefix);
 /*}}}*/
-// QByteArray    asset_file(const QString &resPath);/*{{{*/
+// QByteArray   file(const QString &path);/*{{{*/
 /**
- * \ingroup ssqt_assets
- * Loads a file stream from the assets resource.
- * @param resPath The resource path. Must start with ':' character. When not,
- * it will be recognized as a disk file.
- * @return A \c QByteArray with the stream data loaded in memory.
- * @since 1.1
+ * @ingroup ssqt_assets
+ * Loads a file.
+ * @param path Path for the file to load. Usually this is a resource path but
+ * can be any valid path for Qt.
+ * @return A \c QByteArray object with the file loaded. Or an empty \c
+ * QByteArray object if the file could not be loaded.
+ * @since 1.3
  **/
-QByteArray asset_file(const QString &resPath);
+QByteArray   file(const QString &path);
 /*}}}*/
-// QByteArray    asset_file(uint resID, const char* type);/*{{{*/
+// QByteArray   file(uint numericID, const QString &prefix);/*{{{*/
 /**
- * \ingroup ssqt_assets
- * Loads a file stream from the assets resource.
- * @param resID Resource numerical alias.
- * @param type Resource type. All kind of types can be defined here.
- * @return A \c QByteArray with the stream data loaded in memory.
- * @remarks The \a type argument refers to the \b prefix set to a group of
- * resources in a ".qrc" file. Common used prefixes are:
- * - \b ico: List all icon files. Image files with ".ico" extension for
- *   Windows, ".icns" for Mac or ".pxm" for Linux.
- * - \b bmp: Standard image format for Windows applications. List of "bitmap"
- *   files.
- * - \b png: List of images in Portable Network Graphics format. Works in all
- *   platforms.
- * - \b svg: Scalable Vector Graphics. As the name says, is a vector graphic
- *   format. Is a drawing format that can be scaled to any size without
- *   loosing quality. Works on all platforms.
- * - \b menu: Prefix used to group all menu resources written in XML format.
- *   Works on all platforms.
- * - \b string: Prefix used to group all string table resources in XML format.
- *   Works on all platforms.
- * .
- * These are only examples of common used prefixes. This function does not do
- * any parsing or checking against the prefix (type) specification and its
- * content. All kinds of resources will be loaded in binary format and
- * returned as a \c QByteArray object.
- *
- * The combination of \a type and \a resID will build the path for the
- * resource in the ".qrc" file. We use numbered resources becouse its more
- * common and simple to set numeric constants in C/C++ code than string
- * constants. To name a resource using a number put a '#' sign in front of the
- * number, in decimal notation, as an alias of the file. For example, lets
- * name the application icon following the examples above.
- * ~~~~~~~~~~~~~~~{.xml}
- * <RCC>
- *   <qresource prefix="/ico">
- *     <file alias="#10">res/icon/app.ico</file>
- *   </qresource>
- * </RCC>
- * ~~~~~~~~~~~~~~~
- * When loading this icon file you will use the following code.
- * ~~~~~~~~~~~~~~~~
- * #define IDI_APPICON  10      // Defined somehere.
- *
- * QByteArray data = asset_file(IDI_APPICON, "ico");
- * ~~~~~~~~~~~~~~~~
- * Internally the \c asset_file() function will build the path for the
- * resource putting together \a resID and \a type parameters in a simple \e
- * sprintf way, ending with the string ":/ico/#10". Peace of cake.
- * @since 1.1
+ * @ingroup ssqt_assets
+ * Loads a file in the resource bundle.
+ * @param numericID The numeric identifier of the resource, follows the
+ * standards in this module.
+ * @param prefix The resource group prefix.
+ * @returns A \c QByteArray object with the contents of the loaded file or
+ * empty, if the file could not be loaded.
+ * @remarks This function uses assets::buildPath() to build the path to the
+ * resource file and then calls assets::file(const QString&) to load it.
+ * @since 1.3
  **/
-QByteArray asset_file(uint resID, const char* type);
+QByteArray   file(uint numericID, const QString &prefix);
 /*}}}*/
-// QIcon         asset_icon(uint resID);/*{{{*/
+
+// QImage       image(const QString &path);/*{{{*/
 /**
- * \ingroup ssqt_assets
- * Loads an ico file from a numeric labeled resource.
- * @param resID Resource numerical alias.
- * @returns A \c QIcon object having the data loaded from the resource. If the
- * resource is not an image or is not found the returned object's method \c
- * isNull() will return \b true.
- * @remarks As stated in \c asset_file() function documentation, this
- * operation relies on the resource file be in a "qresource" group prefixed
- * with the type "ico". For example:
- * ~~~~~~~~~~~~~~~{.xml}
- * <RCC>
- *   <qresource prefix="/ico">
- *     <file alias="#10">res/icon/app.ico</file>
- *   </qresource>
- * </RCC>
- * ~~~~~~~~~~~~~~~
- * @sa asset_file()
- * @since 1.1
+ * @ingroup ssqt_assets
+ * Loads an image from a file or resource.
+ * @param path Path to the file. Usually this is a resource path but can be
+ * any valid image path.
+ * @returns A \c QImage object with the contents of the file or a \b NULL
+ * image object (\c QImage::isNull() is \b true) if the file could not be
+ * loaded or has an image not supported by Qt.
+ * @since 1.3
  **/
-QIcon asset_icon(uint resID);
+QImage       image(const QString &path);
 /*}}}*/
-// QImage        asset_image(uint resID, const char *type = "png");/*{{{*/
+// QImage       image(uint numericID, const QString &prefix = QString("img"));/*{{{*/
 /**
- * \ingroup ssqt_assets
- * Loads an image from the assets resource.
- * @param resID Resource numerical alias.
- * @param type Resource type. All kind of types can be defined here. The
- * default value is "png" that is the common group used for imagens.
- * @returns A \c QImage object having the image data. If the image file
- * cannot be found the returned object will be \b NULL.
- * @sa asset_file()
- * @sa asset_pixmap()
- * @since 1.1
+ * @ingroup ssqt_assets
+ * Loads an image from a resource file.
+ * @param numericID The numeric identifier of the resource, follows the
+ * standards in this module.
+ * @param prefix Optional. The resource group prefix. The standard prefix for
+ * generic images is "img".
+ * @returns A \c QImage object with the contents of the file or a \b NULL
+ * image object (\c QImage::isNull() is \b true) if the file could not be
+ * loaded or has an image not supported by Qt.
+ * @remarks This function uses assets::buildPath() to build the path to the
+ * resource file and then calls assets::image(const QString&) to load it.
+ * @since 1.3
  **/
-QImage asset_image(uint resID, const char *type = "png");
+QImage       image(uint numericID, const QString &prefix = QString("img"));
 /*}}}*/
-// QPixmap       asset_pixmap(uint resID, const char *type = "png");/*{{{*/
+
+// QPixmap      pixmap(const QString &path);/*{{{*/
 /**
- * \ingroup ssqt_assets
- * Loads a pixmap from the assets resource.
- * @param resID Resource numerical alias.
- * @param type Resource type. All kind of types can be defined here. The
- * default value is "png" that is the common group used for imagens.
- * @returns A \c QPixmap object having the image data. If the image file
- * cannot be found the returned object will be \b NULL.
- * @sa asset_file()
- * @sa asset_image()
- * @since 1.1
+ * @ingroup ssqt_assets
+ * Loads an image from a file or resource.
+ * @param path Path to the file. Usually this is a resource path but can be
+ * any valid image path.
+ * @returns A \c QPixmap object with the contents of the file or a \b NULL
+ * image object (\c QPixmap::isNull() is \b true) if the file could not be
+ * loaded or has an image not supported by Qt.
+ * @since 1.3
  **/
-QPixmap asset_pixmap(uint resID, const char* type = "png");
+QPixmap      pixmap(const QString &path);
 /*}}}*/
-// SSXMLDocument asset_xml(uint resID, const char *type);/*{{{*/
+// QPixmap      pixmap(uint numericID, const QString &prefix = QString("png"));/*{{{*/
 /**
- * \ingroup ssqt_assets
- * Loads an XML document from the assets resource.
- * @param resID Resource numerical alias.
- * @param type Resource type. All kinds of types can be defined here.
- * @return An \c SSXMLDocument object with the file contents. If the resource
- * doesn't contains a well-formed XML or cannot be found the returned object
- * will be empty.
- * @sa asset_file()
- * @since 1.1
+ * @ingroup ssqt_assets
+ * Loads an image from a resource file.
+ * @param numericID The numeric identifier of the resource, follows the
+ * standards in this module.
+ * @param prefix Optional. The resource group prefix. The standard prefix for
+ * pixmaps is "png".
+ * @returns A \c QPixmap object with the contents of the file or a \b NULL
+ * image object (\c QPixmap::isNull() is \b true) if the file could not be
+ * loaded or has an image not supported by Qt.
+ * @remarks This function uses assets::buildPath() to build the path to the
+ * resource file and then calls assets::pixmap(const QString&) to load it.
+ * @since 1.3
  **/
-SSXMLDocument asset_xml(uint resID, const char *type);
+QPixmap      pixmap(uint numericID, const QString &prefix = QString("png"));
 /*}}}*/
-// SSMenu*       asset_menu(uint resID);/*{{{*/
+
+// QIcon        icon(const QString &path);/*{{{*/
 /**
- * \ingroup ssqt_assets
- * Loads a menu bar from a XML resource.
- * @param resID The numeric resource alias. This must be in a group of type
- * named "menu".
- * @returns A \c SSMenu object pointer with the resource contents. Notice that
- * the resource must be in an XML format as of stated in the @ref ssqt_menus
- * documentation. The caller is responsible of deleting this object with it is
- * non longer needed.
- * @remarks The resource is first loaded with the function \c asset_xml() and
- * then parsed with the \c SSMenu object.
- * @sa asset_popup()
- * @since 1.1
+ * @ingroup ssqt_assets
+ * Loads an icon image from a file or resource.
+ * @param path Path to the file. Usually this is a resource path but can be
+ * any valid image path.
+ * @returns A \c QIcon object with the contents of the file or a \b NULL
+ * icon object (\c QIcon::isNull() is \b true) if the file could not be
+ * loaded or has a format not supported by Qt.
+ * @since 1.3
  **/
-SSMenu* asset_menu(uint resID);
+QIcon        icon(const QString &path);
 /*}}}*/
-// SSMenuPopup*  asset_popup(uint resID);/*{{{*/
+// QIcon        icon(uint numericID, const QString &prefix = QString("ico"));/*{{{*/
 /**
- * \ingroup ssqt_assets
- * Loads a popup menu from an XML resource assets.
- * @param resID The numeric resource alias. This must be in a group of type
- * named "menu".
- * @returns A \c SSMenuPopup object pointer with the resource contents. Notice
- * that the resource must be in an XML format as of stated in the @ref
- * ssqt_menus documentation. The caller is responsible of deleting this object
- * with it is non longer needed.
- * @remarks The resource is first loaded with the function \c asset_xml() and
- * then parsed with the \c SSMenuPopup object.
- * @sa asset_menu()
- * @since 1.1
+ * @ingroup ssqt_assets
+ * Loads an icon image from a resource file.
+ * @param numericID The numeric identifier of the resource, follows the
+ * standards in this module.
+ * @param prefix Optional. The resource group prefix. The standard prefix for
+ * icons is "ico".
+ * @returns A \c QIcon object with the contents of the file or a \b NULL
+ * icon object (\c QIcon::isNull() is \b true) if the file could not be
+ * loaded or has a format not supported by Qt.
+ * @remarks This function uses assets::buildPath() to build the path to the
+ * resource file and then calls assets::icon(const QString&) to load it.
+ * @since 1.3
  **/
-SSMenuPopup* asset_popup(uint resID);
+QIcon        icon(uint numericID, const QString &prefix = QString("ico"));
 /*}}}*/
-};
+
+// SSXMLDocument xml(const QString &path);/*{{{*/
+/**
+ * @ingroup ssqt_assets
+ * Loads a XML document from a file or resource.
+ * @param path Path to the file. Usually this is a resource path but can be
+ * any valid path.
+ * @returns A \c SSXMLDocument object with the contents of the file or an
+ * empty object if the file could not be loaded.
+ * @since 1.3
+ **/
+SSXMLDocument xml(const QString &path);
+/*}}}*/
+// SSXMLDocument xml(uint numericID, const QString &prefix = QString("xml"));/*{{{*/
+/**
+ * @ingroup ssqt_assets
+ * Loads a XML document from a resource.
+ * @param numericID The numeric identifier of the resource, follows the
+ * standards in this module.
+ * @param prefix Optional. The resource group prefix. The standard prefix for
+ * XML files is "xml".
+ * @returns A \c SSXMLDocument object with the contents of the file or an
+ * empty object if the file could not be loaded.
+ * @remarks This function uses assets::buildPath() to build the path to the
+ * resource file and then calls assets::xml(const QString&) to load it.
+ * @since 1.3
+ **/
+SSXMLDocument xml(uint numericID, const QString &prefix = QString("xml"));
+/*}}}*/
+
+// SSMenu*      menu(const QString &path);/*{{{*/
+/**
+ * @ingroup ssqt_assets
+ * Loads a menu from a file or resource.
+ * @param path Path to the file. Usually this is a resource path but can be
+ * any valid path.
+ * @returns A pointer to a \c SSMenu object with the menu bar structure or \b
+ * NULL when the menu could not be loaded. The caller is responsible to delete
+ * this pointer after using it.
+ * @since 1.3
+ **/
+SSMenu*      menu(const QString &path);
+/*}}}*/
+// SSMenu*      menu(uint numericID, const QString &prefix = QString("menu"));/*{{{*/
+/**
+ * @ingroup ssqt_assets
+ * Loads a menu from a resource.
+ * @param numericID The numeric identifier of the resource, follows the
+ * standards in this module.
+ * @param prefix Optional. The resource group prefix. The standard prefix for
+ * menu resources is "menu".
+ * @returns A pointer to a \c SSMenu object with the menu bar structure or \b
+ * NULL when the menu could not be loaded. The caller is responsible to delete
+ * this pointer after using it. This function is implemented calling
+ * assets::buildPath() to build the resource path the call
+ * assets::menu(const QString&) to load it.
+ * @since 1.3
+ **/
+SSMenu*      menu(uint numericID, const QString &prefix = QString("menu"));
+/*}}}*/
+
+// SSMenuPopup* menuPopup(const QString &path);/*{{{*/
+/**
+ * @ingroup ssqt_assets
+ * Loads a menu popup from a file or resource.
+ * @param path Path to the file. Usually this is a resource path but can be
+ * any valid path.
+ * @returns A pointer to a \c SSMenuPopup object with the popup menu structure
+ * or \b NULL when the menu could not be loaded. The caller is responsible to
+ * delete this pointer after using it.
+ * @since 1.3
+ **/
+SSMenuPopup* menuPopup(const QString &path);
+/*}}}*/
+// SSMenuPopup* menuPopup(uint numericID, const QString &prefix = QString("menu"));/*{{{*/
+/**
+ * @ingroup ssqt_assets
+ * Loads a popup menu from a resource.
+ * @param numericID The numeric identifier of the resource, follows the
+ * standards in this module.
+ * @param prefix Optional. The resource group prefix. The standard prefix for
+ * popup menu resources is "menu".
+ * @returns A pointer to a \c SSMenuPopup object with the popup menu structure
+ * or \b NULL when the menu could not be loaded. The caller is responsible to
+ * delete this pointer after using it. This function is implemented calling
+ * assets::buildPath() to build the resource path the call
+ * assets::menuPopup(const QString&) to load it.
+ * @since 1.3
+ **/
+SSMenuPopup* menuPopup(uint numericID, const QString &prefix = QString("menu"));
+/*}}}*/
+
+}
 ///@} ssqt_assets
 
 #endif /* __SSQTASST_HPP_DEFINED__ */

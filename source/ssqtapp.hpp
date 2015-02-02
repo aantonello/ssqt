@@ -24,20 +24,20 @@ class SSMainWnd;
  * \ingroup ssqt_ui
  * An extension of \c QApplication class.
  * It should be used in GUI applications only since \c QApplication class is
- * strict for that matter. The \SSApplication class brings some methods to
+ * strict for that matter. The SSApplication class brings some methods to
  * make some things easy. For example, you can use the #ensureSingleInstance()
  * member function to ensure that you are running a single application
  * instance. Works on every platform. Also there is the #currentApp() static
- * member function that returns a pointer to the current \SSApplication
- * instance. If you don't need to extend the \SSApplication class you can use
+ * member function that returns a pointer to the current SSApplication
+ * instance. If you don't need to extend the SSApplication class you can use
  * the ss::App variable that holds the application instance. If you made an
  * application class extension you can write a macro to cast the ss::App
  * variable to your own class type. For example:
- * ~~~~~~~~~~~~
+ * ~~~~~~~~~~~~{.cpp}
  * #define theApp   ((MyApplicationClass*)ss::App)
  * ~~~~~~~~~~~~
  * Then, somewhere else in your code you use it like that:
- * ~~~~~~~~~~~~
+ * ~~~~~~~~~~~~{.cpp}
  * theApp->my_really_clever_method();
  * ~~~~~~~~~~~~
  * If you use the SSMainWnd class to construct your main window it will
@@ -45,6 +45,10 @@ class SSMainWnd;
  * instance through the member function #mainWindow(). Together with the \c
  * currentApp() method or the ss::App variable this allows you to access the
  * main window instance everywhere in your software.
+ *
+ * When running in a Windows environment the \c SSApplication class also gives
+ * support to load strings from a windows resource file. This support is only
+ * available when the \c Q_OS_WIN macro is defined in compile time.
  *//* --------------------------------------------------------------------- */
 class SSApplication : public QApplication
 {
@@ -92,6 +96,22 @@ public:
      **/
     static SSApplication* currentApp();
     /*}}}*/
+    // static QString resString(uint stringID);/*{{{*/
+    /**
+     * Loads a string from a Windows executable resource.
+     * @param stringID The string identifier in the application resource.
+     * @returns A \c QString object with the contents of the string loaded or
+     * empty, if the resource could not be found.
+     * @remarks This function will return something useful only when this
+     * library is compiled to run in a Windows environment. It depends on the
+     * Windows standard API to load a string from the application resource.
+     * @note Despite the parameter \p stringID be an unsigned integer that can
+     * have 32 or 64 bits long for historical reasons resource identifiers are
+     * limited to 16 bits only.
+     * @since 1.3
+     **/
+    static QString resString(uint stringID);
+    /*}}}*/
     //@}
 public:
     /** @name Operations */ //@{
@@ -123,6 +143,22 @@ public:
      **/
     SSMainWnd* mainWindow() const;
     /*}}}*/
+    // QString string(uint stringID);/*{{{*/
+    /**
+     * Loads a string from the application resource.
+     * @param stringID The string identifier in the application resource.
+     * @returns A \c QString object with the contents of the string loaded or
+     * empty, if the resource could not be found.
+     * @remarks This function will return something useful only when this
+     * library is compiled to run in a Windows environment. It depends on the
+     * Windows standard API to load a string from the application resource.
+     * @note Despite the parameter \p stringID be an unsigned integer that can
+     * have 32 or 64 bits long for historical reasons resource identifiers are
+     * limited to 16 bits only.
+     * @since 1.3
+     **/
+    QString string(uint stringID);
+    /*}}}*/
     //@}
 protected:
     // QSharedMemory *m_shared;/*{{{*/
@@ -145,6 +181,16 @@ protected:
     friend class SSMainWnd;
 };
 /* Inlined Functions {{{ */
+/* ---------------------------------------------------------------------------
+ * Operations {{{
+ * ------------------------------------------------------------------------ */
+// inline QString SSApplication::string(uint stringID);/*{{{*/
+inline QString SSApplication::string(uint stringID) {
+    return resString(stringID);
+}
+/*}}}*/
+// Operations }}}
+/* ------------------------------------------------------------------------ */
 /* }}} Inlined Functions */
 
 /**

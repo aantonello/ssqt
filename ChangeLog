@@ -1,5 +1,11 @@
-Build: 0	Version: 1.3	Branch: v1.3
+Build: 1	Version: 1.3	Branch: v1.3
 
-	* ChangeLog: Branch v1.3 started.
-	* onload.vim: Version information updated.
-	* source/ssqt.pro: Qt project file updated.
+	* README.md: Documentation update.
+	* ssqtdbg.{hpp,cpp}: Macros and functions added in the "ss"
+	  namespace. Some debugging operations changed to not add a line
+	  break inside calls.
+	* ssqtxmld.cpp: Updated to use new macros of debugging set.
+	* ssqtapp.{hpp,cpp} (resString(), string()): Two new functions
+	  added to load strings from application resource.
+	* Makefile: Added to work with documentation and installation.
+	* ssqt.css: Added style overrules to documentation output.

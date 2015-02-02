@@ -4,7 +4,7 @@
  *
  * \author Alessandro Antonello <aantonello@paralaxe.com.br>
  * \date   novembro 11, 2014
- * \since  Super Simple for Qt 5 1.1
+ * \since  Super Simple for Qt 1.3
  *
  * \copyright
  * This file is provided in hope that it will be useful to someone. It is
@@ -22,90 +22,107 @@
 #include "ssqtmnup.hpp"
 #include "ssqtmenu.hpp"
 
-namespace ss {
-/**
- * @internal
- * @{ *//* ---------------------------------------------------------------- */
-static QString const sc__path(":/%1/#%2");
-///@} internal
+namespace assets {
 
-// QString asset_string(uint resID, size_t size = 1024);/*{{{*/
-QString asset_string(uint resID, size_t size)
+// QString      buildPath(uint numericID, const QString &prefix);/*{{{*/
+QString buildPath(uint numericID, const QString &prefix)
 {
-#ifndef Q_OS_WIN
-    Q_UNUSED(resID);
-    Q_UNUSED(size);
-    return QString();
-#else
-    size_t   length   = size * sizeof(wchar_t);
-    wchar_t *szBuffer = (wchar_t *)malloc( length );
-    QString result;
+    return QString(":/%1/#%2").arg(prefix).arg(numericID);
+}
+/*}}}*/
+// QByteArray   file(const QString &path);/*{{{*/
+QByteArray   file(const QString &path)
+{
+    QFile theFile( path );
+    return theFile.readAll();
+}
+/*}}}*/
+// QByteArray   file(uint numericID, const QString &prefix);/*{{{*/
+QByteArray   file(uint numericID, const QString &prefix)
+{
+    return file(buildPath(numericID, prefix));
+}
+/*}}}*/
 
-    if (!szBuffer) return result;
+// QImage       image(const QString &path);/*{{{*/
+QImage       image(const QString &path)
+{
+    return QImage( path );
+}
+/*}}}*/
+// QImage       image(uint numericID, const QString &prefix = QString("img"));/*{{{*/
+QImage       image(uint numericID, const QString &prefix)
+{
+    return image( buildPath(numericID, prefix) );
+}
+/*}}}*/
 
-    /* The 'LoadResString()' windows function does not add the terminator
-     * NULL.
-     */
-    memset(szBuffer, 0, length);
-    if (LoadStringW((HINSTANCE)GetModuleHandle(NULL), resID, szBuffer, size))
-        result = QString::fromWCharArray(szBuffer);
+// QPixmap      pixmap(const QString &path);/*{{{*/
+QPixmap      pixmap(const QString &path)
+{
+    return QPixmap( path );
+}
+/*}}}*/
+// QPixmap      pixmap(uint numericID, const QString &prefix = QString("png"));/*{{{*/
+QPixmap      pixmap(uint numericID, const QString &prefix)
+{
+    return pixmap( buildPath(numericID, prefix) );
+}
+/*}}}*/
 
-    free(szBuffer);
-    return result;
-#endif
+// QIcon        icon(const QString &path);/*{{{*/
+QIcon        icon(const QString &path)
+{
+    return QIcon( path );
 }
 /*}}}*/
-// QByteArray asset_file(const QString &resPath);/*{{{*/
-QByteArray asset_file(const QString &resPath)
+// QIcon        icon(uint numericID, const QString &prefix = QString("ico"));/*{{{*/
+QIcon        icon(uint numericID, const QString &prefix)
 {
-    QFile resFile( resPath );
-    return resFile.readAll();
+    return icon( buildPath(numericID, prefix) );
 }
 /*}}}*/
-// QByteArray asset_file(uint resID, const char* type);/*{{{*/
-QByteArray asset_file(uint resID, const char* type)
-{
-    return asset_file( sc__path.arg(type).arg(resID) );
-}
-/*}}}*/
-// QIcon asset_icon(uint resID);/*{{{*/
-QIcon asset_icon(uint resID)
-{
-    return QIcon(sc__path.arg("ico").arg(resID));
-}
-/*}}}*/
-// QImage asset_image(uint resID, const char *type = "png");/*{{{*/
-QImage asset_image(uint resID, const char *type)
-{
-    return QImage(sc__path.arg(type).arg(resID));
-}
-/*}}}*/
-// QPixmap asset_pixmap(uint resID, const char* type = "png");/*{{{*/
-QPixmap asset_pixmap(uint resID, const char* type)
-{
-    return QPixmap(sc__path.arg(type).arg(resID));
-}
-/*}}}*/
-// SSXMLDocument asset_xml(uint resID, const char *type);/*{{{*/
-SSXMLDocument asset_xml(uint resID, const char *type)
-{
-    return SSXMLDocument(sc__path.arg(type).arg(resID));
-}
-/*}}}*/
-// SSMenu* asset_menu(uint resID);/*{{{*/
-SSMenu* asset_menu(uint resID)
-{
-    SSXMLDocument xml(asset_xml(resID, "menu"));
 
-    return new SSMenu(&xml);
+// SSXMLDocument xml(const QString &path);/*{{{*/
+SSXMLDocument xml(const QString &path)
+{
+    return SSXMLDocument( path );
 }
 /*}}}*/
-// SSMenuPopup* asset_popup(uint resID);/*{{{*/
-SSMenuPopup* asset_popup(uint resID)
+// SSXMLDocument xml(uint numericID, const QString &prefix = QString("xml"));/*{{{*/
+SSXMLDocument xml(uint numericID, const QString &prefix)
 {
-    SSXMLDocument document(asset_xml(resID, "menu"));
+    return xml( buildPath(numericID, prefix) );
+}
+/*}}}*/
+
+// SSMenu*      menu(const QString &path);/*{{{*/
+SSMenu*      menu(const QString &path)
+{
+    SSXMLDocument document( xml(path) );
+    return new SSMenu( &document );
+}
+/*}}}*/
+// SSMenu*      menu(uint numericID, const QString &prefix = QString("menu"));/*{{{*/
+SSMenu*      menu(uint numericID, const QString &prefix)
+{
+    return menu( buildPath(numericID, prefix) );
+}
+/*}}}*/
+
+// SSMenuPopup* menuPopup(const QString &path);/*{{{*/
+SSMenuPopup* menuPopup(const QString &path)
+{
+    SSXMLDocument document( xml(path) );
     return new SSMenuPopup( &document );
 }
 /*}}}*/
+// SSMenuPopup* menuPopup(uint numericID, const QString &prefix = QString("menu"));/*{{{*/
+SSMenuPopup* menuPopup(uint numericID, const QString &prefix)
+{
+    return menuPopup( buildPath(numericID, prefix) );
+}
+/*}}}*/
+
 };
 

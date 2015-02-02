@@ -50,7 +50,7 @@ public:     // Constructors & Destructor
     /**
      * Loads a file from disk.
      * @param file The file to be loaded.
-     * @remarks This constructor call #open(const QFile &, const char *).
+     * @remarks This constructor call #open(QFile &, const char *).
      * @since 1.1
      **/
     SSXMLDocument(QFile &file);

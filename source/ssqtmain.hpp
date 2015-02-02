@@ -86,7 +86,7 @@ public:
  * ------------------------------------------------------------------------ */
 // inline SSMenu* SSMainWnd::loadMenu(uint resID);/*{{{*/
 inline SSMenu* SSMainWnd::loadMenu(uint resID) {
-    SSMenu* menu = ss::asset_menu(resID);
+    SSMenu* menu = assets::menu(resID);
     setMenuBar( menu ); return menu;
 }
 /*}}}*/

@@ -306,7 +306,7 @@ inline error_t SSMenu::loadMenu(const QString &fileName) {
 /*}}}*/
 // inline error_t SSMenu::loadMenu(uint resID);/*{{{*/
 inline error_t SSMenu::loadMenu(uint resID) {
-    SSXMLDocument document = ss::asset_xml(resID, "menu");
+    SSXMLDocument document = assets::xml(resID, "menu");
     return loadMenu(&document);
 }
 /*}}}*/

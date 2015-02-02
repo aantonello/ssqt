@@ -35,8 +35,10 @@
  *//* --------------------------------------------------------------------- */
 class SSMenuPopup : public QMenu
 {
+    /** @internal *//// @{
     Q_OBJECT
     Q_PROPERTY(uint itemID READ itemID)
+    ///@}
 
 public:
     // explicit SSMenuPopup(QWidget *parent = NULL);/*{{{*/

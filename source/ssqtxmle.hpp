@@ -72,6 +72,7 @@ public:         // Attributes
     // size_t numberOfAttributes() const;/*{{{*/
     /**
      * Returns the number of attributes this element has.
+     * @return The number of attributes in a \b size_t type.
      * @since 1.1
      **/
     size_t numberOfAttributes() const;
@@ -79,6 +80,7 @@ public:         // Attributes
     // size_t numberOfChildren() const;/*{{{*/
     /**
      * Returns the number of children elements this element has.
+     * @return The number of children elements in a \b size_t type.
      * @since 1.1
      **/
     size_t numberOfChildren() const;

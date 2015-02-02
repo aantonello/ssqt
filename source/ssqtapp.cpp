@@ -56,6 +56,21 @@ SSApplication* SSApplication::currentApp()
     return ss::App;
 }
 /*}}}*/
+// QString SSApplication::resString(uint stringID);/*{{{*/
+QString SSApplication::resString(uint stringID)
+{
+#if !defined(Q_OS_WIN)
+    return QString();
+#else
+    wchar_t *buff = NULL;
+
+    int size = LoadStringW(GetModuleHandle(NULL), stringID, (LPWSTR)&buff, 0);
+    if (size <= 0) return QString();
+
+    return QString::fromWCharArray(buff, size);
+#endif  /* defined(Q_OS_WIN) */
+}
+/*}}}*/
 
 /* ---------------------------------------------------------------------------
  * Operations
