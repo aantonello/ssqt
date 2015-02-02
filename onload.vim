@@ -11,8 +11,8 @@ let g:cpp_qt = 1
 
 "" ApplyTemplate plugin configuration
 let g:atpl_UsersList['@AUTHORMAIL@'] = '<aantonello@paralaxe.com.br>'
-let g:atpl_UsersList['@PROJECT@']    = 'Super Simple for Qt 5'
-let g:atpl_UsersList['@VERSION@']    = '1.1'
+let g:atpl_UsersList['@PROJECT@']    = 'Super Simple Library for Qt'
+let g:atpl_UsersList['@VERSION@']    = '1.3'
 let g:atpl_UsersList['@OWNER@']      = 'Paralaxe Tecnologia Ltda.'
 
 "" ctags files
