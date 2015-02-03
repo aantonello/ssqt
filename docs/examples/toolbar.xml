@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <toolbar version="1">
-  <button id="2001" title="New" keys="ctrl+n" />
-  <button id="2002" title="Open" keys="ctrl+o" />
-  <button id="2003" title="Close" keys="ctrl+w" />
+  <button id="2001" text="New" keys="ctrl+n" />
+  <button id="2002" text="Open" keys="ctrl+o" />
+  <button id="2003" text="Close" keys="ctrl+w" />
   <separator />
-  <button id="2004" title="Style">
+  <button id="2004" text="Style">
     <popup id="3000">
-      <item id="3001" title="_Square" />
-      <item id="3002" title="_Rounded" />
-      <item id="3003" title="_Ellipse" />
+      <item id="3001" text="_Square" />
+      <item id="3002" text="_Rounded" />
+      <item id="3003" text="_Ellipse" />
     </popup>
   </button>
-  <button id="2005" title="Modes">
+  <button id="2005" text="Modes">
     <popup ref=":/menu/#3100" />
   </button>
   <button id="2006" name="object name"
-    title="Tooltip Text"
+    text="Tooltip Text"
     keys="Shortcut keys"
     icon="icon resource identifier"
     checked="true|false"

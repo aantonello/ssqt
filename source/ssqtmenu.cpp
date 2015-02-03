@@ -17,6 +17,7 @@
 #include "ssqtmenu.hpp"
 #include "ssqtasst.hpp"
 #include "ssqterr.hpp"
+#include "ssqtdbg.hpp"
 
 /* ===========================================================================
  * SSMenu Class
@@ -29,9 +30,17 @@
 // error_t SSMenu::loadMenu(SSXMLDocument *document);/*{{{*/
 error_t SSMenu::loadMenu(SSXMLDocument *document)
 {
-    if (document == NULL) return SSE_INVAL;
+    if (document == NULL)
+    {
+        sstrace("SSXMLDocument is NULL!");
+        return SSE_INVAL;
+    }
+
     if (document->elementName != SS_MENU_NODE_MENU)
+    {
+        sstrace("root element name:'%s' should be '%s'", sst(document->elementName), sst(SS_MENU_NODE_MENU));
         return SSE_FTYPE;
+    }
 
     size_t limit = document->numberOfChildren();
     SSXMLElement *element;
@@ -40,8 +49,10 @@ error_t SSMenu::loadMenu(SSXMLDocument *document)
     {
         element = document->elementAt(i);
         if (element->elementName != SS_MENU_NODE_POPUP)
+        {
+            sstrace("element at %u is '%s'. Should be: '%s'", i, sst(element->elementName), sst(SS_MENU_NODE_POPUP));
             continue;
-
+        }
         addPopup(element);
     }
     return SSNO_ERROR;

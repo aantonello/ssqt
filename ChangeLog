@@ -1,4 +1,4 @@
-Build: 1	Version: 1.3	Branch: v1.3
+Build: 6	Version: 1.3	Branch: v1.3
 
 	* README.md: Documentation update.
 	* ssqtdbg.{hpp,cpp}: Macros and functions added in the "ss"
@@ -9,3 +9,4 @@ Build: 1	Version: 1.3	Branch: v1.3
 	  added to load strings from application resource.
 	* Makefile: Added to work with documentation and installation.
 	* ssqt.css: Added style overrules to documentation output.
+	* docs/*.xml: Documentation update. All examples were wrong.

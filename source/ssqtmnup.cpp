@@ -20,6 +20,7 @@
 #include "ssqtxmld.hpp"
 #include "ssqtmnui.hpp"
 #include "ssqtmnup.hpp"
+#include "ssqtdbg.hpp"
 
 /* ===========================================================================
  * SSMenuPopup Class
@@ -104,7 +105,12 @@ SSMenuPopup* SSMenuPopup::addPopup(SSMenuPopup *popup)
 // error_t SSMenuPopup::loadMenu(SSXMLElement *element);/*{{{*/
 error_t SSMenuPopup::loadMenu(SSXMLElement *element)
 {
-    if (!element) return SSE_INVAL;
+    if (!element)
+    {
+        sstrace("SSXMLElement is NULL!");
+        return SSE_INVAL;
+    }
+
     if (element->elementName != SS_MENU_NODE_POPUP)
         return SSE_INVAL;
 
@@ -114,12 +120,10 @@ error_t SSMenuPopup::loadMenu(SSXMLElement *element)
         error_t result = subMenu->loadMenu(element->attribute(SS_MENU_ATTR_REF));
 
         if (result != SSNO_ERROR)
-        {
             delete subMenu;
-            return result;
-        }
-        addPopup(subMenu);
-        return SSNO_ERROR;
+        else
+            addPopup(subMenu);
+        return result;
     }
     QString text( element->attribute(SS_MENU_ATTR_TEXT) );
 

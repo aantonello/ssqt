@@ -1,5 +1,5 @@
 <item id="numeric identifier" name="unique name"
-  title="short text"
+  text="short text"
   desc="description to show in the status bar"
   keys="shortcut keys separated by commas"
   icon="icon resource name or number"

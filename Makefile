@@ -12,7 +12,7 @@ all: debug
 ##############################################################################
 MAJOR_VER = 1
 MINOR_VER = 3
-BUILD_VER = 1
+BUILD_VER = 5
 TARGET    = libssqt
 TARGETDIR = /c/plx/libs/$(TARGET)-$(MAJOR_VER).$(MINOR_VER)
 DEBUGDIR  = $(TARGETDIR)/x86/dbg

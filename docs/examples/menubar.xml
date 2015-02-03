@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <menu>
-  <popup title="_File" id="1000">
-    <item id="1001" title="_New" keys="ctrl+n" />
-    <item id="1002" title="_Open..." keys="ctrl+o" />
-    <item id="1003" title="_Close" />
+  <popup text="_File" id="1000">
+    <item id="1001" text="_New" keys="ctrl+n" />
+    <item id="1002" text="_Open..." keys="ctrl+o" />
+    <item id="1003" text="_Close" />
     <separator />
-    <item id="9999" title="_Quit" />
+    <item id="9999" text="_Quit" />
   </popup>
   <popup ref=":/menu/#2000" />
-  <popup title="_Help" id="9000">
-    <item id="9001" title="_Content..." keys="CTRL+F1" />
-    <item id="9002" title="Conte_xt..." keys="F1" />
+  <popup text="_Help" id="9000">
+    <item id="9001" text="_Content..." keys="CTRL+F1" />
+    <item id="9002" text="Conte_xt..." keys="F1" />
     <separator />
-    <item id="9009" title="_About" />
+    <item id="9009" text="_About" />
   </popup>
 </menu>

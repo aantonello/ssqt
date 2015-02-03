@@ -39,10 +39,39 @@
  * operations must use \c qPrintable() or \c SST() macro.
  * @{ *//* ---------------------------------------------------------------- */
 #define SST(str)                qPrintable(str)
-#define SSNAME(obj)             SST((obj)->metaObject()->className())
+#define SSCLASS(obj)            SST((obj)->metaObject()->className())
+#define SSNAME(obj)             SST((obj)->objectName())
+
+// #define sst         SST/*{{{*/
+/**
+ * @ingroup ssqt_debug
+ * Lower case version of the same macro definition.
+ * @sa SST()
+ * @since 1.3
+ **/
+#define sst         SST
+/*}}}*/
+// #define ssclass     SSCLASS/*{{{*/
+/**
+ * @ingroup ssqt_debug
+ * Lower case version of the SSCLASS() macro definition.
+ * @sa SSCLASS()
+ * @since 1.3
+ **/
+#define ssclass     SSCLASS
+/*}}}*/
+// #define ssname      SSNAME/*{{{*/
+/**
+ * @ingroup ssqt_debug
+ * Lower case version of the SSNAME() macro definition.
+ * @sa SSNAME()
+ * @since 1.3
+ **/
+#define ssname      SSNAME
+/*}}}*/
 
 /**
- * \internal
+ * @internal
  * Different break implementations according to the current compiler.
  * @{ *//* ---------------------------------------------------------------- */
 #if defined(MSC_VER)
@@ -70,6 +99,7 @@
 /**
  * \def SST(str)
  * \ingroup ssqt_debug
+ * \hideinitializer
  * Expands to \c qPrintable(str).
  * This macro is always available. It is just a short way to use the \c
  * qPrintable() Qt macro.
@@ -77,44 +107,76 @@
  * \c qPrintable() macro. The pointer returned is temporary and will not be
  * available when the execution point ends.
  **/// }}}
+/* #define SSCLASS(obj) {{{ */
+/**
+ * \def SSCLASS(obj)
+ * \ingroup ssqt_debug
+ * \hideinitializer
+ * Prints a \c QObject class name.
+ * @param obj Pointer to a \c QObject instance.
+ * @returns A temporary pointer to the object class name. This macro uses \c
+ * qPrintable() to return a temporary pointer to a \b char array.
+ * @remarks Only pointers to \c QObject objects are accepted. You cannot pass
+ * a reference.
+ * @note This macro is always available regardless the definition of \c
+ * QT_NO_DEBUG.
+ * @since 1.3
+ **/
+/* }}} #define SSCLASS(obj) */
 // #define SSNAME(obj) {{{
 /**
  * \def SSNAME(obj)
  * \ingroup ssqt_debug
- * Prints an \c QObject class name.
+ * \hideinitializer
+ * Prints an \c QObject name.
  * @param obj A pointer to a \c QObject class object.
  * @remarks Notice that this macro accepts only \c QObject objects or extended
- * classes. Also, the macro expects a pointer not a value or reference.
+ * classes. Also, the macro expects a pointer, not a value nor reference.
  * @note This macro is always available regardless of the presence of \c
  * QT_NO_DEBUG.
  **/// }}}
 // #define ssprint(fmt, ...) {{{
 /**
- * \def ssprint
+ * \def ssprint(fmt, ...)
  * \ingroup ssqt_debug
+ * \hideinitializer
  * Writes formated debugging output.
  * This macro expands to nothing when \c QT_NO_DEBUG is defined. Otherwise it
  * will expand to \c __ss_debug() function. Read its documentation to.
+ * @param fmt Pointer to a \b char array with data to write in the standard
+ * output plus format specifications.
+ * @param ... List of arguments to be formated according to specifications
+ * embedded in \p fmt parameter.
  * @since 1.3
  **/// }}}
 // #define ssdebug(fmt, ...) {{{
 /**
- * \def ssdebug
+ * \def ssdebug(fmt, ...)
  * \ingroup ssqt_debug
+ * \hideinitializer
  * Write formated debugging output.
  * This macro expands to nothing when \c QT_NO_DEBUG is defined. Otherwise it
  * will expand to \c __ss_debug() function.
+ * @param fmt Pointer to a \b char array with data to write in the standard
+ * output plus format specifications.
+ * @param ... List of arguments to be formated according to specifications
+ * embedded in \p fmt parameter.
  * @remarks This macro outputs the file name and line number where it is used
  * automatically. If you don't want that use \c ssprint() instead.
  * @since 1.3
  **/ // }}}
 // #define sstrace(fmt, ...) {{{
 /**
- * \def sstrace
+ * \def sstrace(fmt, ...)
  * \ingroup ssqt_debug
+ * \hideinitializer
  * Write formated debugging output.
  * This macro expands to nothing when \c QT_NO_DEBUG is defined. Otherwise it
  * will expand to \c __ss_trace() function.
+ * @param fmt Pointer to a \b char array with data to write in the standard
+ * output plus format specifications.
+ * @param ... List of arguments to be formated according to specifications
+ * embedded in \p fmt parameter.
  * @remarks This macro outputs the current function name using the \c
  * Q_FUNC_INFO macro. If you don't want that use \c ssprint() instead.
  * @since 1.3
@@ -123,6 +185,7 @@
 /**
  * \def ssflush(h, p, s, t)
  * \ingroup ssqt_debug
+ * \hideinitializer
  * Writes binary data in the debugging output.
  * This macro expands to nothing when \c QT_NO_DEBUG is defined. Otherwise it
  * will expand to \c __ss_flush() function.
@@ -139,6 +202,7 @@
 /**
  * \def ssassert(expr, msg)
  * \ingroup ssqt_debug
+ * \hideinitializer
  * Throws an "Assertion Failed!" message.
  * @param expr An expression that evaluates to \b true or \b false.
  * @param msg A string with a message to be shown when the expression \a expr

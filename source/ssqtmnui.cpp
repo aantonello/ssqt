@@ -16,6 +16,7 @@
 #include "stdplx.hpp"
 #include "ssqtxmle.hpp"
 #include "ssqtmnui.hpp"
+#include "ssqtdbg.hpp"
 
 /* ===========================================================================
  * SSMenuItem Class
