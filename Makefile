@@ -17,9 +17,9 @@ TARGET    = libssqt
 TARGETDIR = /c/plx/libs/$(TARGET)-$(MAJOR_VER).$(MINOR_VER)
 DEBUGDIR  = $(TARGETDIR)/x86/dbg
 RELEASEDIR = $(TARGETDIR)/x86/rel
-DEBUGBIN  = bin/build/$(TARGET).a
-RELEASEBIN = bin/build/$(TARGET).a
-DOCROOT = /cygdrive/f/xampplite/htdocs/docs
+DEBUGBIN  = bin/build/dbg/$(TARGET).a
+RELEASEBIN = bin/build/rel/$(TARGET).a
+DOCROOT = /f/xampplite/htdocs/docs
 DOC_DIST_DIR = $(DOCROOT)/$(TARGET)-$(MAJOR_VER).$(MINOR_VER)
 
 CP = rsync
@@ -57,16 +57,14 @@ $(DOC_DIST_DIR) :
 debug:
 	@${MAKE} --no-print-directory -C bin -f Makefile debug 2>&1 | tee build.log
 
-release: bin/Makefile
-	@cd bin
-	@qmake release
+release:
+	@${MAKE} --no-print-directory -C bin -f Makefile release 2>&1 | tee build.log
 
 debug-clean:
 	@${MAKE} --no-print-directory -C bin -f Makefile debug-clean 2>&1 | tee build.log
 
 release-clean:
-	@cd bin
-	@qmake release-clean
+	@${MAKE} --no-print-directory -C bin -f Makefile release-clean 2>&1 | tee build.log
 
 clean: debug-clean release-clean
 

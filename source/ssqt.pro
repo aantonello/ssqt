@@ -8,7 +8,6 @@ TEMPLATE   = lib
 CONFIG    += staticlib
 TARGET     = ssqt
 VERSION    = 1.3
-DESTDIR    = build
 
 # If others include directories are needed:
 # INCLUDEPATH +=
@@ -20,10 +19,12 @@ CONFIG(debug, debug|release) {
   # Instalation folder for debugging
   target.path = $$(WORKHOME)/libs/libssqt-$$VERSION/x86/dbg
   DEFINES += DEBUG
+  DESTDIR  = build/dbg
 } else {
   # Instalation folder for release tests
   target.path = $$(WORKHOME)/libs/libssqt-$$VERSION/x86/rel
   DEFINES += NDEBUG
+  DESTDIR  = build/rel
 }
 
 headers.path = $$(WORKHOME)/libs/libssqt-$$VERSION
