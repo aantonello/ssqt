@@ -1,5 +1,3 @@
 Build: 23	Version: 1.1	Branch: Master
 
-	* ssqtasst.{hpp,cpp} (asset_file(const QString&)): New function
-	  added.
-	* ssqttlbr.{hpp,cpp}: SSToolbar class added.
+	* ChangeLog: Commit provided FS changes.
