@@ -17,6 +17,7 @@
 #define __SSQTASST_HPP_DEFINED__
 
 #include "ssqtcmn.hpp"
+#include "ssqtapp.hpp"
 /**
  * @internal
  * Forward declarations.
@@ -98,6 +99,10 @@ class SSMenu;
  * an \c SSMenu object, and \c assets::menuPopup() that load a popup menu
  * returning a \c SSMenuPopup object.</dd>
  * </dl>
+ * Besides all functions to work with data in a ".qrc" file the assets
+ * namespace also has functions to work with standard Windows resources ".res"
+ * files. Usually you will embed this resource in your application. It can
+ * provide strings, menus and all source of files and data.
  * @{ *//* ---------------------------------------------------------------- */
 namespace assets {
 
@@ -334,6 +339,45 @@ SSMenuPopup* menuPopup(const QString &path);
  * @since 1.3
  **/
 SSMenuPopup* menuPopup(uint numericID, const QString &prefix = QString("menu"));
+/*}}}*/
+
+// QString      string(uint numericID);/*{{{*/
+/**
+ * Loads a string from the Windows resource bundle.
+ * @param numericID The numeric identifier of the string in the resource
+ * bundle. Despite that this parameter is an unsigned integer value resource
+ * identifiers are limited to 16 bits values. Therefore this number cannot be
+ * greater than 65535.
+ * @returns A \c QString object with the required text or empty. Notice that
+ * the Windows resources only accepts Latin1 strings and the application must
+ * be compiled with \c UNICODE set.
+ * @remarks This function is inline and will call \c
+ * SSApplication::resString() to recover the required text.
+ * @since 1.3
+ **/
+inline
+QString string(uint numericID) {
+    return SSApplication::resString(numericID);
+}
+/*}}}*/
+// QString      string(const QString &resourceID);/*{{{*/
+/**
+ * Loads a string from the Windows resource bundle.
+ * @param resourceID The identifier of the string. Usually strings are
+ * identified with numbers. To use this function with a numeric identified
+ * string you must prefix the number with a "#" sign like: "#1234".
+ * @returns A \c QString object with the required text or empty. Notice that
+ * the Windows resources only accepts Latin1 strings and the application must
+ * be compiled with \c UNICODE set.
+ * @remarks This function is inline and will call \c
+ * SSApplication::resString() to recover the required text.
+ * @since 1.3
+ **/
+inline
+QString string(const QString &resourceID) {
+    if (!resourceID.startsWith('#')) return QString();
+    return string(resourceID.section('#', 1, 1).toUInt());
+}
 /*}}}*/
 
 }
