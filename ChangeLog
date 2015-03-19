@@ -1,4 +1,3 @@
-Build: 7	Version: 1.3	Branch: v1.3
+Build: 10	Version: 1.3	Branch: v1.3
 
-	* ssqtasst.hpp (string()): Added two overloaded functions to load
-	  strings from a Windows resource bundle (.res file).
+	* ssqtdbg.hpp: Added debuggin macro.

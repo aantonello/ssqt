@@ -41,6 +41,23 @@
 #define SST(str)                qPrintable(str)
 #define SSCLASS(obj)            SST((obj)->metaObject()->className())
 #define SSNAME(obj)             SST((obj)->objectName())
+// #define boolT(expr)             ((expr) ? "TRUE" : "FALSE")/*{{{*/
+/**
+ * @ingroup ssqt_debug
+ * @hideinitializer
+ * Converts an expression in boolean.
+ * @syntax
+ * ~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * const char* boolT(bool expr);
+ * ~~~~~~~~~~~~~~~~~~~~
+ * @param expr Any expression that results in a thruty value or falsy value.
+ * @return A constant string pointer (<b>const char*</b>) with two possible
+ * values: <b>"TRUE"</b> or <b>"FALSE"</b> depending on the result of the
+ * boolean expression.
+ * @since 1.3
+ **/
+#define boolT(expr)             ((expr) ? "TRUE" : "FALSE")
+/*}}}*/
 
 // #define sst         SST/*{{{*/
 /**
@@ -68,6 +85,14 @@
  * @since 1.3
  **/
 #define ssname      SSNAME
+/*}}}*/
+// #define ssT         SST/*{{{*/
+/**
+ * @ingroup ssqt_debug
+ * Same as \c SST()
+ * @since 1.3
+ **/
+#define ssT         SST
 /*}}}*/
 
 /**

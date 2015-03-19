@@ -37,6 +37,7 @@
  * ~~~~~~~~~~~~~~
  * @{ *//* ---------------------------------------------------------------- */
 #define SSNO_ERROR          0   /**< Used when no errors occurs. */
+#define SSE_NONE            0   /**< Same as \c SSNO_ERROR. */
 #define SSE_PERM           -1   /**< Not super-user */
 #define SSE_NOENT          -2   /**< No such file or directory */
 #define SSE_SRCH           -3   /**< No such process */
