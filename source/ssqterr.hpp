@@ -162,8 +162,10 @@
 // define SSE_ILSEQ           -138
 #define SSE_OVERFLOW       -139 /**< Value too large for defined data type */
 
-#define SSE_WOULDBLOCK     E_AGAIN  /**< Used only withing socket errors. */
+#define SSE_WOULDBLOCK     EAGAIN   /**< Used only withing socket errors. */
+#define SSE_AUTH           -140     /**< Authentication required. */
 
+#define SSE_FAIL           -999     /**< For unknown errors. */
 #define SSE_APP             -1000   /**< Limit for application errors.  */
 ///@} ssqt_errors
 #endif /* __SSQTERR_HPP_DEFINED__ */

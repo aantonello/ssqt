@@ -1,101 +1,78 @@
-##############################################################################
-# Makefile to build or update the build system.
-# This makefile uses premake4 for its usage.
-##############################################################################
+# ============================================================================
+# Local Makefile
+# ============================================================================
 
-.PHONY: all clean help update docs install-docs
+.PHONY: debug debug-install release release-install debug-clean release-clean help docs docs-install
 
-all: debug
+default: debug
 
-##############################################################################
+# ============================================================================
 # Local Variables
-##############################################################################
-MAJOR_VER = 1
-MINOR_VER = 3
-BUILD_VER = 5
-TARGET    = libssqt
-TARGETDIR = /c/plx/libs/$(TARGET)-$(MAJOR_VER).$(MINOR_VER)
-DEBUGDIR  = $(TARGETDIR)/x86/dbg
-RELEASEDIR = $(TARGETDIR)/x86/rel
-DEBUGBIN  = bin/build/dbg/$(TARGET).a
-RELEASEBIN = bin/build/rel/$(TARGET).a
-DOCROOT = /f/xampplite/htdocs/docs
-DOC_DIST_DIR = $(DOCROOT)/$(TARGET)-$(MAJOR_VER).$(MINOR_VER)
+# ============================================================================
+MAJOR_VERSION = 1
+MINOR_VERSION = 3
+BUILD_VERSION = 11
+VERSION_NUMBER = $(MAJOR_VERSION).$(MINOR_VERSION)
+
+HTDOCS     = /f/xampplite/htdocs/docs
+HTDOCS_DIR = $(HTDOCS)/libssqt-$(VERSION_NUMBER)
+DIST_DIR   = $(WORKHOME)/libs/libssqt-$(VERSION_NUMBER)
+TAGS_DIR   = $(DIST_DIR)/tags
 
 CP = rsync
-CPOPTIONS = -vcruptOm --no-o --no-g --delete --delete-excluded --exclude='.*.sw?'
+CPOPTS = -cvruptOm --no-o --no-g --delete --delete-excluded --exclude='.*.sw?'
 
-##############################################################################
-# Dependencies part
-##############################################################################
-
-bin/Makefile : source/ssqt.pro
-	@cd bin
-	@qmake -makefile ../source/ssqt.pro
-
-$(TARGETDIR) :
-	mkdir -p $(TARGETDIR)
-
-$(DEBUGDIR) : $(TARGETDIR)
-	@mkdir -p $(DEBUGDIR)
-
-$(RELEASEDIR) : $(TARGETDIR)
-	@mkdir -p $(RELEASEDIR)
-
-$(DEBUGBIN) : debug
-
-$(RELEASEBIN) : release
-
-
-$(DOC_DIST_DIR) :
-	@mkdir -p $(DOC_DIST_DIR)
-
-##############################################################################
+# ============================================================================
 # Targets
-##############################################################################
+# ============================================================================
 
-debug:
-	@${MAKE} --no-print-directory -C bin -f Makefile debug 2>&1 | tee build.log
+debug :
+	@qmake -C bin -f Makefile debug
 
-release:
-	@${MAKE} --no-print-directory -C bin -f Makefile release 2>&1 | tee build.log
+release :
+	@qmake -C bin -f Makefile release
 
-debug-clean:
-	@${MAKE} --no-print-directory -C bin -f Makefile debug-clean 2>&1 | tee build.log
+debug-install :
+	@qmake -C bin -f Makefile debug-install
 
-release-clean:
-	@${MAKE} --no-print-directory -C bin -f Makefile release-clean 2>&1 | tee build.log
+release-install :
+	@qmake -C bin -f Makefile release-install
 
-clean: debug-clean release-clean
+debug-clean :
+	@qmake -C bin -f Makefile debug-clean
 
+release-clean :
+	@qmake -C bin -f Makefile release-clean
 
-help:
-	@echo "This is a Makefile utility at top of Qt build system."
-	@echo "We have the following targets:"
-	@echo ""
-	@echo "debug        Builds the debug version of the project"
-	@echo "release      Builds the release version of the project"
-	@echo "debug-clean  Clean files generated from debug build"
-	@echo "release-clean Clean files generated from release build"
-	@echo "clean        Clean all current builds and binaries"
-	@echo "docs         Build documentation using 'doxygen'"
-	@echo "install      Install header files and/or binaries"
-	@echo "install-docs Install the documentation in HTML in the Apache path. Notice "
-	@echo "             that this target needs the '/f' mount point. It must point to"
-	@echo "             the root directory of the XAMPPLITE tool (currently F:)."
-	@echo ""
+clean : debug-clean release-clean
 
+docs :
+	( cat doxyfile; echo "PROJECT_NUMBER=$(VERSION_NUMBER)" ) | doxygen -
 
-install : $(DEBUGDIR) $(RELEASEDIR) $(DEBUGBIN) $(RELEASEBIN)
-	$(CP) $(CPOPTIONS) source/libssqt.h $(TARGETDIR)/
-	$(CP) $(CPOPTIONS) source/ssqt*.hpp $(TARGETDIR)/
-	$(CP) $(CPOPTIONS) $(DEBUGBIN) $(DEBUGDIR)/
-	$(CP) $(CPOPTIONS) $(RELEASEBIN) $(RELEASEDIR)/
+docs-clean :
+	@rm docs/html/*
 
-docs:
-	( cat doxyfile; echo "PROJECT_NUMBER=$(MAJOR_VER).$(MINOR_VER).$(BUILD_VER)" ) | doxygen -
+docs-install :
+	$(CP) $(CPOPTS) docs/html/ $(HTDOCS_DIR)/
 
-install-docs: $(DOC_DIST_DIR)
-	$(CP) $(CPOPTIONS) docs/html/ $(DOC_DIST_DIR)/
+$(TAGS_DIR) :
+	@mkdir -p $(TAGS_DIR)
 
+tags : $(TAGS_DIR)
+	@pmake ctags -t libssqt-$(VERSION_NUMBER)/tags/libssqt.tags
+
+help :
+	@echo -e "Makefile targets:\n"\
+	      "debug             Builds debug target\n"\
+	      "debug-clean       Clean up the debug target files\n"\
+	      "debug-install     Installs, building if needed, the debug target\n"\
+	      "release           Build the release target\n"\
+	      "release-clean     Clean up the debug target files\n"\
+	      "release-install   Installs, building if needed, the release target\n"\
+	      "clean             Clean up all built targets\n"\
+		  "docs              Build the documentation through Doxygen\n"\
+		  "docs-clean        Clean up all documentation\n"\
+		  "docs-install      Copy documentation in the thumb drive\n"\
+		  "tags              Build a tags file in the dist directory"
+		
 
