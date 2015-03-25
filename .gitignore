@@ -2,8 +2,8 @@
 .DS_Store
 libssqt.dxt
 build.log
+doxygen_sqlite3.db
 
 bin/
 docs/html/
-
 

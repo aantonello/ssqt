@@ -48,6 +48,15 @@
 
 /**
  * \ingroup ssqt_ui
+ * \defgroup ssqt_ui_vars UI Variables
+ * Global variables.
+ * There is little need for global variables in a C++ application but, we
+ * found some things more useful when they are stored in global entities.
+ * Global variables in this library are always inside he "ss" namespace.
+ **/
+
+/**
+ * \ingroup ssqt_ui
  * \defgroup ssqt_menus Menus
  * Extended support for menu bars and popup menus.
  * This modules provides support for loading menus from resources. A menu

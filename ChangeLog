@@ -1,5 +1,8 @@
-Build: 12	Version: 1.3	Branch: v1.3
+Build: 16	Version: 1.3	Branch: v1.3
 
-	* ssqtdbg.hpp: Added debuggin macro.
-	* Makefile: Updated. Finally works.
-	* ssqterr.hpp: Some new constants added.
+	* source/ssqtapp.{hpp,cpp}: Added functions to support automatic
+	  message box construction.
+	* source/ssqtapp.cpp (showMsg()): Added translation for message
+	  box buttons.
+	* source/ssqtmsgb.{hpp,cpp}: SSMsgBox class added.
+

@@ -31,10 +31,11 @@
  *//* --------------------------------------------------------------------- */
 class SSButtonItem : public QWidgetAction
 {
+    ///! \cond devel_output
     Q_OBJECT
     Q_PROPERTY(uint itemID READ itemID)
     Q_PROPERTY(SSMenuPopup* subMenu READ subMenu WRITE subMenu)
-
+    ///! \endcond
 public:
     /** @name Constructors & Destructor */ //@{
     // explicit SSButtonItem(QObject *parent = NULL);/*{{{*/

@@ -18,6 +18,7 @@
 
 #include <QApplication>
 #include <QSharedMemory>
+#include <QMessageBox>
 class SSMainWnd;
 
 /**
@@ -49,11 +50,11 @@ class SSMainWnd;
  * When running in a Windows environment the \c SSApplication class also gives
  * support to load strings from a windows resource file. This support is only
  * available when the \c Q_OS_WIN macro is defined in compile time.
+ * \sa [QApplication](http://doc.qt.io/qt-5/qapplication.html)
+ * \since 1.0
  *//* --------------------------------------------------------------------- */
 class SSApplication : public QApplication
 {
-    Q_OBJECT
-
 public:
     /** @name Constructors & Destructor */ //@{
     // SSApplication(int &argc, char** argv);/*{{{*/
@@ -81,7 +82,7 @@ public:
     /*}}}*/
     //@}
 public:
-    /** @name Static Functions */ //@{
+    // Static Functions
     // static SSApplication* currentApp();/*{{{*/
     /**
      * Retrieves the instance of the running application.
@@ -112,7 +113,7 @@ public:
      **/
     static QString resString(uint stringID);
     /*}}}*/
-    //@}
+
 public:
     /** @name Operations */ //@{
     // bool ensureSingleInstance(const QString &applicationKey);/*{{{*/
@@ -179,6 +180,8 @@ protected:
     /*}}}*/
 
     friend class SSMainWnd;
+
+    Q_OBJECT
 };
 /* Inlined Functions {{{ */
 /* ---------------------------------------------------------------------------
@@ -193,16 +196,10 @@ inline QString SSApplication::string(uint stringID) {
 /* ------------------------------------------------------------------------ */
 /* }}} Inlined Functions */
 
-/**
- * @defgroup ssqt_ui_vars UI Variables
- * Global variables.
- * There is little need for global variables in a C++ application but, we
- * found some things more useful when they are stored in global entities.
- * Global variables in this library are always inside he "ss" namespace.
- * @{ *//* ---------------------------------------------------------------- */
 namespace ss {
     // extern SSApplication *App;/*{{{*/
     /**
+     * \ingroup ssqt_ui_vars
      * Pointer to the current instance of the application.
      * It will get set only if you use the \c SSApplication class or extends
      * the \c SSApplication class. All constructors of SSApplication set this
@@ -220,6 +217,5 @@ namespace ss {
     extern SSApplication *App;
     /*}}}*/
 };
-///@} ssqt_ui_vars
 
 #endif /* __SSQTAPP_HPP_DEFINED__ */

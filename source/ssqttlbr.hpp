@@ -99,7 +99,7 @@ public:
      * Initializes this object using the resource with specified identifier.
      * @param resID The identifier of the XML resource with the toolbar
      * structure. This value is converted to a number in decimal notation and
-     * used to find the resource which alias is <code>:/toolbar/#resID</code>.
+     * used to find the resource which alias is <code>:/toolbar/\#resID</code>.
      * @return \b true when the function succeeds. Otherwise \b false.
      * @since 1.1
      **/

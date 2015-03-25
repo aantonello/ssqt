@@ -187,6 +187,8 @@ public:
      * absolute path. If it is a resource file the path must start with
      * a colon character. The XML format especification is defined in the @ref
      * ssqt_menus module documentation.
+     * @return When succeeded the result is the same value passed through \a
+     * popup. Otherwise the result will be \b NULL.
      * @remarks The root element of this file must be a "popup" element.
      * @since 1.1
      **/
@@ -238,7 +240,7 @@ public:
     /*}}}*/
     //@}
 protected:
-    QList<SSMenuPopup*> m_list;
+    QList<SSMenuPopup*> m_list;                 /**< Popup menu list.   */
 };
 /* Inline Functions {{{ */
 /* ---------------------------------------------------------------------------

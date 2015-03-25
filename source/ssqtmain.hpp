@@ -32,6 +32,7 @@
  * register the class instance in the SSApplication class instance if it was
  * created. This makes possible to get the SSMainWnd instance through its
  * member function SSApplication::mainWindow().
+ * @sa [QMainWindow](http://doc.qt.io/qt-5/qmainwindow.html)
  * @since 1.1
  *//* --------------------------------------------------------------------- */
 class SSMainWnd : public QMainWindow

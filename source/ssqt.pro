@@ -43,6 +43,7 @@ HEADERS += libssqt.h \
     ssqtmenu.hpp \
     ssqttlbi.hpp \
     ssqttlbr.hpp \
+    ssqtmsgb.hpp \
     ssqtmain.hpp \
     ssqtapp.hpp
 # HEADERS }}}
@@ -56,6 +57,7 @@ SOURCES += ssqtdbg.cpp \
     ssqtmenu.cpp \
     ssqttlbi.cpp \
     ssqttlbr.cpp \
+    ssqtmsgb.cpp \
     ssqtmain.cpp \
     ssqtapp.cpp
 # SOURCES }}}

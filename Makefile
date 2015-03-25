@@ -27,22 +27,22 @@ CPOPTS = -cvruptOm --no-o --no-g --delete --delete-excluded --exclude='.*.sw?'
 # ============================================================================
 
 debug :
-	@qmake -C bin -f Makefile debug
+	@qmake --no-print-directory -C bin -f Makefile debug
 
 release :
-	@qmake -C bin -f Makefile release
+	@qmake --no-print-directory -C bin -f Makefile release
 
 debug-install :
-	@qmake -C bin -f Makefile debug-install
+	@qmake --no-print-directory -C bin -f Makefile debug-install
 
 release-install :
-	@qmake -C bin -f Makefile release-install
+	@qmake --no-print-directory -C bin -f Makefile release-install
 
 debug-clean :
-	@qmake -C bin -f Makefile debug-clean
+	@qmake --no-print-directory -C bin -f Makefile debug-clean
 
 release-clean :
-	@qmake -C bin -f Makefile release-clean
+	@qmake --no-print-directory -C bin -f Makefile release-clean
 
 clean : debug-clean release-clean
 

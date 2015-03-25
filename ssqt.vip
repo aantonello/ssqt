@@ -52,6 +52,10 @@ ssqt="$WORKHOME/plx/src/simple/ssqt" CD=. in=onload.vim enc="utf8" {
      ssqttlbr.cpp
     }
    }
+   SSMsgBox=. {
+    ssqtmsgb.hpp
+    ssqtmsgb.cpp
+   }
    SSMainWnd=. {
     ssqtmain.hpp
     ssqtmain.cpp

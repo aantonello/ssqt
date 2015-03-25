@@ -25,6 +25,7 @@
 #include "ssqtmnup.hpp"
 #include "ssqtmenu.hpp"
 #include "ssqtasst.hpp"
+#include "ssqtmsgb.hpp"
 #include "ssqtmain.hpp"
 #include "ssqtapp.hpp"
 

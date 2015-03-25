@@ -46,7 +46,7 @@
  * @ingroup ssqt_debug
  * @hideinitializer
  * Converts an expression in boolean.
- * @syntax
+ * @par Syntax
  * ~~~~~~~~~~~~~~~~~~~~{.cpp}
  * const char* boolT(bool expr);
  * ~~~~~~~~~~~~~~~~~~~~
@@ -95,16 +95,13 @@
 #define ssT         SST
 /*}}}*/
 
-/**
- * @internal
- * Different break implementations according to the current compiler.
- * @{ *//* ---------------------------------------------------------------- */
+///! \cond devel_output
 #if defined(MSC_VER)
 # define    ssbreak()           __debugbreak()
 #else
 # define    ssbreak()           asm("int $3")
 #endif /* defined(MSC_VER) */
-///@} internal
+///! \endcond
 
 #if defined(QT_NO_DEBUG) || defined(NDEBUG)
 # define ssprint(...)
